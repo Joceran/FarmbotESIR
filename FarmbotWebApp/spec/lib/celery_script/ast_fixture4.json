@@ -1,0 +1,116 @@
+[
+  {
+    "kind": "move_absolute",
+    "args": {
+      "offset": {
+        "kind": "coordinate",
+        "args": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "speed": 100,
+      "location": {
+        "args": {
+          "tool_id": __TOOL_ID__
+        },
+        "kind": "tool"
+      }
+    }
+  },
+  {
+    "kind": "move_relative",
+    "args": {
+      "x": 4,
+      "y": 5,
+      "z": 6,
+      "speed": 100
+    }
+  },
+  {
+    "kind": "write_pin",
+    "args": {
+      "pin_number": 1,
+      "pin_value": 2,
+      "pin_mode": 0
+    }
+  },
+  {
+    "kind": "read_pin",
+    "args": {
+      "pin_number": 4,
+      "pin_mode": 0,
+      "label": "foo"
+    }
+  },
+  {
+    "kind": "wait",
+    "args": {
+      "milliseconds": 4
+    }
+  },
+  {
+    "kind": "send_message",
+    "args": {
+      "message": "Bot is at position {{ x }}, {{ y }}, {{ z }}.",
+      "message_type": "success"
+    }
+  },
+  {
+    "kind": "_if",
+    "args": {
+      "lhs": "x",
+      "op": "is",
+      "rhs": 0,
+      "_then": {
+        "kind": "execute",
+        "args": {
+          "sequence_id": __SEQUENCE_ID__
+        }
+      },
+      "_else": {
+        "kind": "nothing",
+        "args": {}
+      }
+    }
+  },
+  {
+    "kind": "execute",
+    "args": {
+      "sequence_id": __SEQUENCE_ID__
+    }
+  },
+  {
+    "kind": "execute_script",
+    "args": {
+      "label": "plant-detection"
+    }
+  },
+  {
+    "kind": "take_photo",
+    "args": {}
+  },
+  {
+    "kind": "move_absolute",
+    "args": {
+      "offset": {
+        "kind": "coordinate",
+        "args": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      },
+      "speed": 100,
+      "location": {
+        "args": {
+          "x": 1,
+          "y": 2,
+          "z": 3
+        },
+        "kind": "coordinate"
+      }
+    }
+  }
+]

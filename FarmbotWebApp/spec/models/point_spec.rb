@@ -1,0 +1,2 @@
+describe Point do
+end

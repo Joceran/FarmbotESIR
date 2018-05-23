@@ -1,0 +1,106 @@
+// Styles for INPUTS
+input:not([role="combobox"]) {
+  font-size: 1.2rem;
+  color: $dark_gray;
+  height: auto;
+  width: 100%;
+  border: 0;
+  padding: 6px 8px;
+  box-shadow: 0px 0px 10px $light_gray;
+  &[type="checkbox"] {
+    width: inherit;
+  }
+  &:focus {
+    background-color: $white;
+    box-shadow: 0px 0px 10px $translucent;
+  }
+  &.bulk-day-selector {
+    width: 10%;
+    box-shadow: none;
+    margin-bottom: 0.75rem!important;
+    margin-top: 0.75rem!important;
+    height: 1.5rem;
+    vertical-align: top;
+    &.margin-left {
+      margin-left: 20%;
+    }
+  }
+  &.day {
+    display: none;
+  }
+  &.dim {
+    background: darken($white, 2%) !important;
+  }
+}
+
+.day-selector-wrapper {
+  width: 10%;
+  height: 3rem;
+  display: inline-block;
+}
+
+.week-row {
+  height: 30.5px;
+}
+
+select {
+  border: none;
+  padding: 7px;
+  background: $white;
+  width: 100%;
+}
+
+.filter-search {
+  &.dim {
+    Button {
+      background: darken($white, 2%) !important;
+      &:hover {
+        background: darken($white, 2%) !important;
+      }
+    }
+  }
+  &.disabled {
+    button {
+      background: darken($white, 10%) !important;
+      pointer-events: none;
+    }
+  }
+}
+
+.filter-search-item-none::after {
+    content: "*";
+}
+
+.filter-search-heading-item {
+  pointer-events: none;
+  font-weight: bold;
+  &:before {
+    content: "➖";
+    font-weight: bold;
+    color: inherit;
+  }
+}
+
+.fb-checkbox {
+  input[type="checkbox"] {
+    border-radius: 0;
+    -webkit-appearance: none;
+    border: 0.5px solid $gray;
+    width: 3rem;
+    height: 3rem;
+    background: $white;
+    position: relative;
+    margin-top: 0;
+    cursor: pointer;
+    &:checked:after {
+      content: '';
+      position: absolute;
+      border: solid $dark_gray;
+      border-width: 0 4.5px 4.5px 0;
+      transform: rotate(45deg);
+      bottom: 0.5rem;
+      left: 0.8rem;
+      padding: 0.9rem 0.4rem;
+    }
+  }
+}
