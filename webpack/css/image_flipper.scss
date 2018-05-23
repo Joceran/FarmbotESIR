@@ -1,0 +1,95 @@
+.image-flipper {
+  position: relative;
+}
+
+.image-flipper-image {
+  max-width: 100%;
+  margin: auto;
+  max-height: 650px;
+  min-height: 200px;
+}
+
+.image-flipper-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+.image-flipper-right {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+.is-loaded-false {
+  display: none;
+}
+
+.is-loaded-true {
+  display: block;
+}
+
+.no-flipper-image-container {
+  img {
+    opacity: 0.4;
+  }
+  p {
+    position: absolute;
+    font-size: 1.5rem;
+    text-align: center;
+    padding: 20% 1rem 0;
+    line-height: 2.4rem;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    margin-left: 50px;
+    margin-right: 50px;
+  }
+}
+
+.photos-widget {
+  .widget-footer {
+    display: flex;
+    justify-content: space-between;
+    label {
+      font-weight: normal;
+    }
+    span {
+      font-weight: bold;
+    }
+  }
+  .image-metadatas {
+    display: flex;
+    label {
+      margin-left: 1rem;
+      margin-right: 0.5rem;
+    }
+  }
+  .image-created-at {
+    span {
+    white-space: nowrap;
+    }
+    label {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+.index-indicator {
+  position: absolute;
+  background: $white;
+  height: 3px;
+  top: 3rem;
+  bottom: 0;
+  right: 0;
+}
