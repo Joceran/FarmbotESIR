@@ -9,7 +9,7 @@ jest.mock("../../../history", () => ({
 }));
 
 import * as React from "react";
-import { mount, shallow } from "enzyme";
+import { mount } from "enzyme";
 import { AddFarmEvent } from "../add_farm_event";
 import { AddEditFarmEventProps } from "../../interfaces";
 import { fakeFarmEvent, fakeSequence } from "../../../__test_support__/fake_state/resources";
@@ -32,14 +32,12 @@ describe("<AddFarmEvent />", () => {
       farmEvents: [farmEvent],
       getFarmEvent: () => farmEvent,
       findExecutable: () => sequence,
-      timeOffset: 0,
-      autoSyncEnabled: false,
-      allowRegimenBackscheduling: false,
+      timeOffset: 0
     };
   }
 
   it("renders", () => {
-    const wrapper = mount(<AddFarmEvent {...fakeProps()} />);
+    const wrapper = mount(<AddFarmEvent {...fakeProps() } />);
     wrapper.setState({ uuid: "FarmEvent" });
     ["Add Farm Event", "Sequence or Regimen", "fake", "Save"].map(string =>
       expect(wrapper.text()).toContain(string));
@@ -49,21 +47,13 @@ describe("<AddFarmEvent />", () => {
   });
 
   it("redirects", () => {
-    const wrapper = mount(<AddFarmEvent {...fakeProps()} />);
+    const wrapper = mount(<AddFarmEvent {...fakeProps() } />);
     expect(wrapper.text()).toContain("Loading");
-  });
-
-  it("renders `none`", () => {
-    const props: Partial<AddEditFarmEventProps> = {};
-    const comp = new AddFarmEvent(props as AddEditFarmEventProps);
-    const results = shallow(<div>{comp.none()}</div>);
-    expect(results.text())
-      .toContain("You haven't made any regimens or sequences yet.");
   });
 
   it("cleans up when unmounting", () => {
     const props = fakeProps();
-    const wrapper = mount(<AddFarmEvent {...props} />);
+    const wrapper = mount(<AddFarmEvent {...props } />);
     wrapper.update();
     const uuid: string = wrapper.state("uuid");
     props.farmEvents[0].uuid = uuid;

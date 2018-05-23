@@ -5,10 +5,8 @@ import { Axis } from "../../interfaces";
 import { ToolTips } from "../../../constants";
 import { Row, Col } from "../../../ui/index";
 import { ZeroRowProps } from "../interfaces";
-import { commandErr } from "../../actions";
 
-const zero =
-  (axis: Axis) => getDevice().setZero(axis).catch(commandErr("Zeroing"));
+const zero = (axis: Axis) => getDevice().setZero(axis);
 const AXES: Axis[] = ["x", "y", "z"];
 
 export function ZeroButton(props: { axis: Axis; disabled: boolean; }) {

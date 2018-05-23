@@ -5,13 +5,8 @@ describe Api::PointsController do
   describe '#update' do
     let(:device) { FactoryBot.create(:device) }
     let(:user) { FactoryBot.create(:user, device: device) }
-    let!(:point) { FactoryBot.create(:generic_pointer, device: device) }
-    let(:slot) { ToolSlot.create!(x:            0,
-                                  y:            0,
-                                  z:            0,
-                                  radius:       1,
-                                  pointer_type: "ToolSlot",
-                                  device_id:  user.device.id) }
+    let!(:point) { FactoryBot.create(:point, device: device) }
+    let(:slot) { Point.create(x: 0, y: 0, z: 0, radius: 1, pointer: ToolSlot.new, device: user.device) }
 
     it 'updates a point' do
       sign_in user
@@ -31,13 +26,13 @@ describe Api::PointsController do
     end
 
     it 'updates a plant' do
-      point = Plant.create!(x:             0,
-                            y:             0,
-                            z:             0,
-                            radius:        1,
-                            openfarm_slug: "lettuce",
-                            device:        user.device,
-                            pointer_type:  "Plant")
+      point = Point.create(x: 0,
+                           y: 0,
+                           z: 0,
+                           radius: 1,
+                           pointer: Plant.new(openfarm_slug: "lettuce"),
+                           device: user.device)
+      expect(point.pointer_type).to eq("Plant")
       sign_in user
       p = { id: point.id,
             x: 23,
@@ -50,7 +45,8 @@ describe Api::PointsController do
       expect(point.x).to eq(p[:x])
       expect(point.y).to eq(p[:y])
       expect(point.name).to eq(p[:name])
-      expect(point.openfarm_slug).to eq(p[:openfarm_slug])
+      expect(point.pointer_type).to eq("Plant")
+      expect(point.pointer.openfarm_slug).to eq(p[:openfarm_slug])
       p.keys.each do |key|
         expect(json).to have_key(key)
       end
@@ -64,7 +60,7 @@ describe Api::PointsController do
         body: { pullout_direction: bad_dir }.to_json,
         params: {id: slot.id, format: :json }
       expect(response.status).to eq(422)
-      expect(slot.reload.pullout_direction).not_to eq(bad_dir)
+      expect(slot.pointer.reload.pullout_direction).not_to eq(bad_dir)
     end
 
     it "updates a tool slot with an valid pullout direction" do
@@ -74,7 +70,7 @@ describe Api::PointsController do
       put :update, body: { pullout_direction: direction }.to_json,
         params: {id: slot.id, format: :json }
       expect(response.status).to eq(200)
-      expect(slot.reload.pullout_direction).to eq(direction)
+      expect(slot.reload.pointer.pullout_direction).to eq(direction)
     end
   end
 end

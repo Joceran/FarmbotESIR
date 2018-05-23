@@ -14,10 +14,6 @@ class ApplicationRecord < ActiveRecord::Base
                      "current_sign_in_ip",
                      "current_sign_in_at",
                      "fbos_version" ]
-  def gone?
-    destroyed? || self.try(:discarded?)
-  end
-
   def the_changes
     self.saved_changes.except(*self.class::DONT_BROADCAST)
   end
@@ -29,7 +25,7 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   def broadcast?
-    current_device && (gone? || notable_changes?)
+    Device.current && (destroyed? || notable_changes?)
   end
 
   def maybe_broadcast
@@ -37,15 +33,16 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   def body_as_json # REMEMBER: Subclasses might override this! - RC
-    gone? ? nil : force_serialization
+    if(destroyed?)
+      return nil
+    else
+      serializer = ActiveModel::Serializer.serializer_for(self)
+      return (serializer ? serializer.new(self) : self).as_json
+    end
   end
 
-  def force_serialization
-    serializer = ActiveModel::Serializer.serializer_for(self)
-    return (serializer ? serializer.new(self) : self).as_json
-  end
   def broadcast_payload
-    { args: { label: Transport.current.current_request_id }, body: body_as_json }.to_json
+    { args: { label: Transport.current_request_id }, body: body_as_json }.to_json
   end
 
   # Overridable
@@ -57,16 +54,10 @@ class ApplicationRecord < ActiveRecord::Base
     "sync.#{name_used_when_syncing}.#{self.id}"
   end
 
-  def current_device
-    @current_device ||= (Device.current || self.try(:device))
-  end
-
   def broadcast!
-    # no     = [User, Device, EdgeNode, PrimaryNode, TokenIssuance, ]
-    # `espeak "#{self.class.name}"` if !no.include?(self.class)
     AutoSyncJob.perform_later(broadcast_payload,
-                              current_device.id,
+                              Device.current.id,
                               chan_name,
-                              Time.now.utc.to_i) if current_device
+                              Time.now.utc.to_i)
   end
 end

@@ -2,21 +2,8 @@ import {
   isNumericSetting,
   isBooleanSetting,
   safeBooleanSettting,
-  safeNumericSetting,
-  Session
+  safeNumericSetting
 } from "../session";
-import { auth } from "../__test_support__/fake_state/token";
-
-describe("fetchStoredToken", () => {
-  it("can't fetch token", () => {
-    expect(Session.fetchStoredToken()).toEqual(undefined);
-  });
-
-  it("can fetch token", () => {
-    localStorage["session"] = JSON.stringify(auth);
-    expect(Session.fetchStoredToken()).toEqual(auth);
-  });
-});
 
 describe("isNumericSetting", () => {
   it("determines numericality", () => {

@@ -1,28 +1,55 @@
 import * as React from "react";
 
 import { DirectionButton } from "./controls/direction_button";
+import { Xyz, BotPosition } from "./devices/interfaces";
+import { McuParams } from "farmbot";
 import { getDevice } from "./device";
-import { buildDirectionProps } from "./controls/direction_axes_props";
-import { ControlsPopupProps } from "./controls/interfaces";
-import { commandErr } from "./devices/actions";
 
 interface State {
   isOpen: boolean;
+  stepSize: number;
 }
 
-export class ControlsPopup
-  extends React.Component<ControlsPopupProps, Partial<State>> {
-  state: State = { isOpen: false };
+interface Props {
+  dispatch: Function;
+  axisInversion: Record<Xyz, boolean>;
+  botPosition: BotPosition;
+  mcuParams: McuParams;
+}
+
+export class ControlsPopup extends React.Component<Props, Partial<State>> {
+
+  state: State = {
+    isOpen: false,
+    stepSize: 100
+  };
 
   private toggle = (property: keyof State) => () =>
     this.setState({ [property]: !this.state[property] });
 
   public render() {
     const isOpen = this.state.isOpen ? "open" : "";
-    const { stepSize, xySwap, arduinoBusy } = this.props;
-    const directionAxesProps = buildDirectionProps(this.props);
-    const rightLeft = xySwap ? "y" : "x";
-    const upDown = xySwap ? "x" : "y";
+    const { mcuParams } = this.props;
+    const directionAxesProps = {
+      x: {
+        isInverted: this.props.axisInversion.x,
+        stopAtHome: !!mcuParams.movement_stop_at_home_x,
+        stopAtMax: !!mcuParams.movement_stop_at_max_x,
+        axisLength: (mcuParams.movement_axis_nr_steps_x || 0)
+          / (mcuParams.movement_step_per_mm_x || 1),
+        negativeOnly: !!mcuParams.movement_home_up_x,
+        position: this.props.botPosition.x
+      },
+      y: {
+        isInverted: this.props.axisInversion.y,
+        stopAtHome: !!mcuParams.movement_stop_at_home_y,
+        stopAtMax: !!mcuParams.movement_stop_at_max_y,
+        axisLength: (mcuParams.movement_axis_nr_steps_y || 0)
+          / (mcuParams.movement_step_per_mm_y || 1),
+        negativeOnly: !!mcuParams.movement_home_up_y,
+        position: this.props.botPosition.y
+      }
+    };
     return <div
       className={"controls-popup " + isOpen}>
       <i className="fa fa-crosshairs"
@@ -30,32 +57,32 @@ export class ControlsPopup
       <div className="controls-popup-menu-outer">
         <div className="controls-popup-menu-inner">
           <DirectionButton
-            axis={rightLeft}
+            axis={"x"}
             direction="right"
-            directionAxisProps={directionAxesProps[rightLeft]}
-            steps={stepSize}
-            disabled={!isOpen || arduinoBusy} />
+            directionAxisProps={directionAxesProps.x}
+            steps={this.state.stepSize}
+            disabled={!isOpen} />
           <DirectionButton
-            axis={upDown}
+            axis={"y"}
             direction="up"
-            directionAxisProps={directionAxesProps[upDown]}
-            steps={stepSize}
-            disabled={!isOpen || arduinoBusy} />
+            directionAxisProps={directionAxesProps.y}
+            steps={this.state.stepSize}
+            disabled={!isOpen} />
           <DirectionButton
-            axis={upDown}
+            axis={"y"}
             direction="down"
-            directionAxisProps={directionAxesProps[upDown]}
-            steps={stepSize}
-            disabled={!isOpen || arduinoBusy} />
+            directionAxisProps={directionAxesProps.y}
+            steps={this.state.stepSize}
+            disabled={!isOpen} />
           <DirectionButton
-            axis={rightLeft}
+            axis={"x"}
             direction="left"
-            directionAxisProps={directionAxesProps[rightLeft]}
-            steps={stepSize}
-            disabled={!isOpen || arduinoBusy} />
+            directionAxisProps={directionAxesProps.x}
+            steps={this.state.stepSize}
+            disabled={!isOpen} />
           <button
             className="i fa fa-camera arrow-button fb-button brown"
-            onClick={() => getDevice().takePhoto().catch(commandErr("Photo"))} />
+            onClick={() => getDevice().takePhoto().catch(() => { })} />
         </div>
       </div>
     </div>;

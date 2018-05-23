@@ -41,7 +41,14 @@ const tr2: TaggedResource = {
     "repeat": 1,
     "time_unit": "daily",
     "executable_id": 23,
-    "executable_type": "Sequence"
+    "executable_type": "Sequence",
+    "calendar": [
+      "2017-05-25T05:00:00.000Z",
+      "2017-05-26T05:00:00.000Z",
+      "2017-05-27T05:00:00.000Z",
+      "2017-05-28T05:00:00.000Z",
+      "2017-05-29T05:00:00.000Z"
+    ]
   },
   "uuid": "FarmEvent.21.1"
 };
@@ -56,7 +63,11 @@ const tr3: TaggedResource = {
     "repeat": 2,
     "time_unit": "daily",
     "executable_id": 24,
-    "executable_type": "Sequence"
+    "executable_type": "Sequence",
+    "calendar": [
+      "2017-05-26T05:00:00.000Z",
+      "2017-05-28T05:00:00.000Z"
+    ]
   },
   "uuid": "FarmEvent.22.2"
 };
@@ -105,6 +116,7 @@ const tr6: TaggedResource = {
   "body": {
     "id": 11,
     "pin": 13,
+    "mode": 0,
     "label": "LED"
   },
   "uuid": "Peripheral.11.5"
@@ -225,6 +237,7 @@ const tr12: TaggedResource = {
     "id": 11,
     "name": "Test Regimen 456",
     "color": "gray",
+    "device_id": 415,
     "regimen_items": [
       {
         "id": 33,
@@ -269,7 +282,9 @@ const tr13: TaggedResource = {
       }
     ],
     "args": {
+      "is_outdated": false,
       "version": 4,
+      "label": "foo",
       "locals": { kind: "scope_declaration", args: {} },
     },
     "kind": "sequence"

@@ -91,10 +91,10 @@ describe("SELECT_REGIMEN", () => {
     state.currentRegimen = undefined;
     const action = {
       type: Actions.SELECT_REGIMEN,
-      payload: "Regimen.4.56"
+      payload: { uuid: "Regimen.4.56", kind: "Regimen" }
     };
     const nextState = regimensReducer(STATE, action);
-    expect(nextState.currentRegimen).toBe(action.payload);
+    expect(nextState.currentRegimen).toBe(action.payload.uuid);
   });
 });
 

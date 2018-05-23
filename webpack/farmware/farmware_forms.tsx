@@ -13,28 +13,25 @@ interface FarmwareFormsProps {
   user_env: Record<string, string | undefined>;
 }
 
-/** Namespace a Farmware config with the Farmware name. */
-export function getConfigEnvName(farmwareName: string, configName: string) {
-  return `${_.snakeCase(farmwareName)}_${configName}`;
-}
-
 export function FarmwareForms(props: FarmwareFormsProps): JSX.Element {
 
-  function inputChange(key: string) {
-    return (e: React.SyntheticEvent<HTMLInputElement>) => {
-      const value = e.currentTarget.value;
-      getDevice().setUserEnv({ [key]: value }).catch(() => { });
-    };
+  function inputChange(key: string, e: React.SyntheticEvent<HTMLInputElement>) {
+    const value = e.currentTarget.value;
+    getDevice().setUserEnv({ [key]: value }).catch(() => { });
+  }
+
+  function getEnvName(farmwareName: string, configName: string) {
+    return `${_.snakeCase(farmwareName)}_${configName}`;
   }
 
   function getValue(farmwareName: string, currentConfig: FarmwareConfig) {
-    return (user_env[getConfigEnvName(farmwareName, currentConfig.name)]
+    return (user_env[getEnvName(farmwareName, currentConfig.name)]
       || _.toString(currentConfig.value));
   }
 
   function run(farmwareName: string, config: FarmwareConfig[]) {
     const pairs = config.map<Pair>((x) => {
-      const label = getConfigEnvName(farmwareName, x.name);
+      const label = getEnvName(farmwareName, x.name);
       const value = getValue(farmwareName, x);
       return { kind: "pair", args: { value, label } };
     });
@@ -72,12 +69,11 @@ export function FarmwareForms(props: FarmwareFormsProps): JSX.Element {
                   <hr />
                 </div>}
               {farmware.config.map((config) => {
-                const configEnvName =
-                  getConfigEnvName(farmware.name, config.name);
                 return <div key={config.name} id={config.name}>
                   <label>{config.label}</label>
                   <BlurableInput type="text"
-                    onCommit={inputChange(configEnvName)}
+                    onCommit={(e) =>
+                      inputChange(getEnvName(farmware.name, config.name), e)}
                     value={getValue(farmware.name, config)} />
                 </div>;
               })}

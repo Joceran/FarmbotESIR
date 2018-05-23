@@ -1,11 +1,10 @@
 import * as React from "react";
 import { AxisNumberProperty, MapTransformProps } from "../interfaces";
-import { getMapSize, transformXY } from "../util";
+import { getMapSize, getXYFromQuadrant } from "../util";
 import { BotPosition } from "../../../devices/interfaces";
 import * as _ from "lodash";
 import { Session } from "../../../session";
 import { BooleanSetting } from "../../../session_keys";
-import { trim } from "../../../util";
 
 export interface BotPeripheralsProps {
   position: BotPosition;
@@ -15,8 +14,8 @@ export interface BotPeripheralsProps {
 }
 
 function lightsFigure(
-  props: { i: number, x: number, y: number, height: number, xySwap: boolean }) {
-  const { i, x, y, height, xySwap } = props;
+  props: { i: number, x: number, y: number, height: number }) {
+  const { i, x, y, height } = props;
   const mapHeightMid = height / 2 + y;
   return <g id="lights" key={`peripheral_${i}`}>
     <defs>
@@ -35,13 +34,9 @@ function lightsFigure(
     </defs>
 
     <use xlinkHref="#light-half"
-      transform={trim(`rotate(${xySwap ? 90 : 0},
-        ${xySwap ? height / 2 + x : x},
-        ${mapHeightMid})`)} />
+      transform={`rotate(0, ${x}, ${mapHeightMid})`} />
     <use xlinkHref="#light-half"
-      transform={trim(`rotate(${xySwap ? 270 : 180},
-        ${x},
-        ${xySwap ? y : mapHeightMid})`)} />
+      transform={`rotate(180, ${x}, ${mapHeightMid})`} />
   </g>;
 }
 
@@ -121,21 +116,20 @@ function vacuumFigure(
 }
 
 export function BotPeripherals(props: BotPeripheralsProps) {
-  const { peripherals, position, plantAreaOffset, mapTransformProps } = props;
-  const { xySwap } = mapTransformProps;
-  const mapSize = getMapSize(mapTransformProps, plantAreaOffset);
-  const positionQ = transformXY(
-    (position.x || 0), (position.y || 0), mapTransformProps);
+  const { peripherals, position, plantAreaOffset } = props;
+  const { quadrant, gridSize } = props.mapTransformProps;
+  const mapSize = getMapSize(gridSize, plantAreaOffset);
+  const positionQ = getXYFromQuadrant(
+    (position.x || 0), (position.y || 0), quadrant, gridSize);
 
   return <g className={"virtual-peripherals"}>
     {peripherals.map((x, i) => {
       if (x.label.toLowerCase().includes("light") && x.value) {
         return lightsFigure({
           i,
-          x: xySwap ? -plantAreaOffset.y : positionQ.qx,
-          y: xySwap ? positionQ.qy : -plantAreaOffset.y,
-          height: xySwap ? mapSize.w : mapSize.h,
-          xySwap,
+          x: positionQ.qx,
+          y: -plantAreaOffset.y,
+          height: mapSize.y
         });
       } else if (x.label.toLowerCase().includes("water") && x.value) {
         return waterFigure({

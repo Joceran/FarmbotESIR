@@ -4,8 +4,6 @@ require_relative "./csheap"
 # 1. Pulls out all PrimaryNodes and EdgeNodes for a sequence node (AST Flat IR form)
 # 2. Stitches the nodes back together in their "canonical" (nested) AST
 #    representation
-# THIS IS BASICALLY A SERIALIZER FOR COMPLEX DATA THAT RAILS CAN'T HANDLE BY
-# DEFAULT.
 module CeleryScript
   class FetchCelery < Mutations::Command
   private  # = = = = = = =
@@ -88,11 +86,11 @@ module CeleryScript
     def misc_fields
       return {
         id:         sequence.id,
+        name:       sequence.name,
+        color:      sequence.color,
         created_at: sequence.created_at,
         updated_at: sequence.updated_at,
-        args:       Sequence::DEFAULT_ARGS,
-        color:      sequence.color,
-        name:       sequence.name
+        args:       Sequence::DEFAULT_ARGS
       }
     end
 
@@ -112,8 +110,11 @@ module CeleryScript
 
     def execute
       canonical_form = misc_fields.merge!(recurse_into_node(entry_node))
-      s = canonical_form.with_indifferent_access
-      s[:in_use]     = sequence.in_use?
+      canonical_form[:in_use] = \
+        EdgeNode.where(kind: "sequence_id", value: sequence.id).exists? ||
+        RegimenItem.where(sequence_id: sequence.id).exists? ||
+        FarmEvent.where(executable: sequence).exists?
+      s                   = HashWithIndifferentAccess.new(canonical_form)
       # HISTORICAL NOTE:
       #   When I prototyped the variables declaration stuff, a few (failed)
       #   iterations snuck into the DB. Gradually migrating is easier than

@@ -8,7 +8,6 @@ import { versionChangeMiddleware } from "./version_tracker_middleware";
 import { Everything } from "../interfaces";
 import { Middleware } from "redux";
 import { Store } from "redux";
-import { refilterLogsMiddleware } from "./refilter_logs_middleware";
 
 export interface MW extends Middleware {
   (store: Store<Everything>):
@@ -25,8 +24,7 @@ export let mwConfig: MiddlewareConfig[] = [
   { env: "development", fn: require("redux-immutable-state-invariant").default() },
   stateFetchMiddlewareConfig,
   revertToEnglishMiddleware,
-  versionChangeMiddleware,
-  refilterLogsMiddleware
+  versionChangeMiddleware
 ];
 
 export function getMiddleware(env: EnvName) {

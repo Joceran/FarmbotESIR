@@ -1,18 +1,10 @@
-let mockAxiosResponse = Promise.resolve({ data: "" });
 jest.mock("axios", () => ({
   default: {
-    post: jest.fn(() => mockAxiosResponse)
+    post: jest.fn(() => Promise.resolve({
+      data: "whatever"
+    }))
   }
 }));
-
-jest.mock("../../session", () => ({
-  Session: {
-    replaceToken: jest.fn(),
-    fetchStoredToken: jest.fn(),
-  }
-}));
-
-jest.mock("farmbot-toastr", () => ({ error: jest.fn(), init: jest.fn() }));
 
 jest.mock("../../api", () => ({
   API: {
@@ -33,7 +25,6 @@ import { mount } from "enzyme";
 import { FrontPage } from "../front_page";
 import axios from "axios";
 import { API } from "../../api";
-import { Session } from "../../session";
 
 describe("<FrontPage />", () => {
   beforeEach(function () {
@@ -55,50 +46,18 @@ describe("<FrontPage />", () => {
       .map(string => expect(el.html()).toContain(string));
   });
 
-  it("submits login: success", async () => {
-    mockAxiosResponse = Promise.resolve({ data: "new data" });
+  it("submits login", () => {
     const el = mount(<FrontPage />);
-    el.setState({ email: "foo@bar.io", loginPassword: "password" });
+    el.setState({
+      email: "foo@bar.io", loginPassword: "password", showServerOpts: true
+    });
     // tslint:disable-next-line:no-any
     const instance = el.instance() as any;
-    await instance.submitLogin({ preventDefault: jest.fn() });
+    instance.submitLogin({ preventDefault: jest.fn() });
     expect(API.setBaseUrl).toHaveBeenCalled();
     expect(axios.post).toHaveBeenCalledWith(
       "://localhost:3000/api/tokens/",
       { user: { email: "foo@bar.io", password: "password" } });
-    expect(Session.replaceToken).toHaveBeenCalledWith("new data");
-  });
-
-  it("submits login: not verified", async () => {
-    mockAxiosResponse = Promise.reject({ response: { status: 403 } });
-    const el = mount(<FrontPage />);
-    el.setState({ email: "foo@bar.io", loginPassword: "password" });
-    // tslint:disable-next-line:no-any
-    const instance = el.instance() as any;
-    await instance.submitLogin({ preventDefault: jest.fn() });
-    expect(API.setBaseUrl).toHaveBeenCalled();
-    expect(axios.post).toHaveBeenCalledWith(
-      "://localhost:3000/api/tokens/",
-      { user: { email: "foo@bar.io", password: "password" } });
-    expect(Session.replaceToken).not.toHaveBeenCalled();
-    // expect(error).toHaveBeenCalledWith("Account Not Verified");
-    // expect(instance.state.activePanel).toEqual("resendVerificationEmail");
-  });
-
-  it("submits login: TOS update", async () => {
-    mockAxiosResponse = Promise.reject({ response: { status: 451 } });
-    window.location.assign = jest.fn();
-    const el = mount(<FrontPage />);
-    el.setState({ email: "foo@bar.io", loginPassword: "password" });
-    // tslint:disable-next-line:no-any
-    const instance = el.instance() as any;
-    await instance.submitLogin({ preventDefault: jest.fn() });
-    expect(API.setBaseUrl).toHaveBeenCalled();
-    expect(axios.post).toHaveBeenCalledWith(
-      "://localhost:3000/api/tokens/",
-      { user: { email: "foo@bar.io", password: "password" } });
-    await expect(Session.replaceToken).not.toHaveBeenCalled();
-    expect(window.location.assign).toHaveBeenCalledWith("/tos_update");
   });
 
   it("submits registration", () => {

@@ -11,7 +11,6 @@ import {
 import { shallow } from "enzyme";
 import { SpreadOverlapHelperProps } from "../interfaces";
 import { fakePlant } from "../../../__test_support__/fake_state/resources";
-import { fakeMapTransformProps } from "../../../__test_support__/map_transform_props";
 
 describe("<SpreadOverlapHelper/>", () => {
   function fakeProps(): SpreadOverlapHelperProps {
@@ -20,7 +19,9 @@ describe("<SpreadOverlapHelper/>", () => {
     plant.body.y = 100;
     plant.body.radius = 25;
     return {
-      mapTransformProps: fakeMapTransformProps(),
+      mapTransformProps: {
+        quadrant: 2, gridSize: { x: 3000, y: 1500 }
+      },
       plant,
       dragging: false,
       zoomLvl: 1,
@@ -35,7 +36,7 @@ describe("<SpreadOverlapHelper/>", () => {
     // Center distance: 900mm (inactive plant at x=100, y=100)
     // Overlap: -650mm (default spread = radius * 10 = 250mm)
     // Percentage overlap of inactive plant: 0%
-    const wrapper = shallow(<SpreadOverlapHelper {...p} />);
+    const wrapper = shallow(<SpreadOverlapHelper {...p } />);
     const indicator = wrapper.find(".overlap-circle").props();
     expect(indicator.fill).toEqual("none");
   });
@@ -46,7 +47,7 @@ describe("<SpreadOverlapHelper/>", () => {
     // Center distance: 240mm (inactive plant at x=100, y=100)
     // Overlap: 10mm (default spread = radius * 10 = 250mm)
     // Percentage overlap of inactive plant: 4%
-    const wrapper = shallow(<SpreadOverlapHelper {...p} />);
+    const wrapper = shallow(<SpreadOverlapHelper {...p } />);
     const indicator = wrapper.find(".overlap-circle").props();
     expect(indicator.fill).toEqual("rgba(41, 141, 0, 0.04)"); // "green"
   });
@@ -57,7 +58,7 @@ describe("<SpreadOverlapHelper/>", () => {
     // Center distance: 200mm (inactive plant at x=100, y=100)
     // Overlap: 50mm (default spread = radius * 10 = 250mm)
     // Percentage overlap of inactive plant: 20%
-    const wrapper = shallow(<SpreadOverlapHelper {...p} />);
+    const wrapper = shallow(<SpreadOverlapHelper {...p } />);
     const indicator = wrapper.find(".overlap-circle").props();
     expect(indicator.fill).toEqual("rgba(204, 255, 0, 0.2)"); // "yellow"
   });
@@ -68,7 +69,7 @@ describe("<SpreadOverlapHelper/>", () => {
     // Center distance: 150mm (inactive plant at x=100, y=100)
     // Overlap: 100mm (default spread = radius * 10 = 250mm)
     // Percentage overlap of inactive plant: 40%
-    const wrapper = shallow(<SpreadOverlapHelper {...p} />);
+    const wrapper = shallow(<SpreadOverlapHelper {...p } />);
     const indicator = wrapper.find(".overlap-circle").props();
     expect(indicator.fill).toEqual("rgba(255, 102, 0, 0.3)"); // "orange"
   });
@@ -79,7 +80,7 @@ describe("<SpreadOverlapHelper/>", () => {
     // Center distance: 125mm (inactive plant at x=100, y=100)
     // Overlap: 125mm (default spread = radius * 10 = 250mm)
     // Percentage overlap of inactive plant: 50%
-    const wrapper = shallow(<SpreadOverlapHelper {...p} />);
+    const wrapper = shallow(<SpreadOverlapHelper {...p } />);
     const indicator = wrapper.find(".overlap-circle").props();
     expect(indicator.fill).toEqual("rgba(255, 20, 0, 0.3)"); // "red"
   });
@@ -90,7 +91,7 @@ describe("<SpreadOverlapHelper/>", () => {
     // Center distance: 50mm (inactive plant at x=100, y=100)
     // Overlap: 200mm (default spread = radius * 10 = 250mm)
     // Percentage overlap of inactive plant: 80%
-    const wrapper = shallow(<SpreadOverlapHelper {...p} />);
+    const wrapper = shallow(<SpreadOverlapHelper {...p } />);
     const indicator = wrapper.find(".overlap-circle").props();
     expect(indicator.fill).toEqual("rgba(255, 0, 0, 0.3)"); // "red"
   });
@@ -101,7 +102,7 @@ describe("<SpreadOverlapHelper/>", () => {
     // Center distance: 0mm (inactive plant at x=100, y=100)
     // Overlap: 250mm (default spread = radius * 10 = 250mm)
     // Percentage overlap of inactive plant: 100%
-    const wrapper = shallow(<SpreadOverlapHelper {...p} />);
+    const wrapper = shallow(<SpreadOverlapHelper {...p } />);
     const indicator = wrapper.find(".overlap-circle").props();
     expect(indicator.fill).toEqual("rgba(255, 0, 0, 0.3)"); // "red"
   });

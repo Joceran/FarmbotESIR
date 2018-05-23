@@ -1,6 +1,5 @@
 module Api
   class ToolsController < Api::AbstractController
-
     def index
       render json: tools
     end
@@ -30,11 +29,11 @@ private
     end
 
     def tools
-      @tools ||= Tool.outter_join_slots(current_device.id)
+      Tool.includes(:tool_slot).where(device: current_device)
     end
 
     def tool
-      @tool ||= Tool.join_tool_slot_and_find_by_id(params[:id])
+      @tool ||= tools.find(params[:id])
     end
   end
 end

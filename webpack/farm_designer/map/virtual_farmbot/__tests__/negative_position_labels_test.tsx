@@ -3,13 +3,14 @@ import { shallow } from "enzyme";
 import {
   NegativePositionLabel, NegativePositionLabelProps
 } from "../negative_position_labels";
-import { fakeMapTransformProps } from "../../../../__test_support__/map_transform_props";
 
 describe("<NegativePositionLabel />", () => {
   const fakeProps = (): NegativePositionLabelProps => {
     return {
       position: { x: 1234, y: undefined, z: undefined },
-      mapTransformProps: fakeMapTransformProps(),
+      mapTransformProps: {
+        quadrant: 1, gridSize: { x: 3000, y: 1500 }
+      },
       plantAreaOffset: { x: 100, y: 100 }
     };
   };

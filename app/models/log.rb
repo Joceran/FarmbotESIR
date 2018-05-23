@@ -10,7 +10,7 @@ class Log < ApplicationRecord
   # pagination, but could later on.
   PAGE_SIZE = 25
 
-  DISCARD   = ["fun", "debug", nil]
+  DISCARD = ["fun", "debug"]
   # self.meta[:type] is used by the bot and the frontend as a sort of
   TYPES     = CeleryScriptSettingsBag::ALLOWED_MESSAGE_TYPES
   # The means by which the message will be sent. Ex: frontend toast notification
@@ -30,7 +30,7 @@ class Log < ApplicationRecord
   end
 
   # Legacy shims ===============================================================
-  #  TODO: Remove these once FBOS stops using the `meta` field (FBOS < v6.4.0).
+  #  TODO: Remove these once FBOS stops using the `meta` field.
   def meta
     {
       type:          self.type,

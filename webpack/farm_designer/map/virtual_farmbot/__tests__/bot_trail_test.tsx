@@ -1,7 +1,6 @@
 import * as React from "react";
 import { shallow } from "enzyme";
 import { BotTrail, BotTrailProps, VirtualTrail } from "../bot_trail";
-import { fakeMapTransformProps } from "../../../../__test_support__/map_transform_props";
 
 describe("<BotTrail/>", () => {
   function fakeProps(): BotTrailProps {
@@ -13,7 +12,9 @@ describe("<BotTrail/>", () => {
       { coord: { x: 4, y: 4 }, water: 20 }]);
     return {
       position: { x: 0, y: 0, z: 0 },
-      mapTransformProps: fakeMapTransformProps(),
+      mapTransformProps: {
+        quadrant: 2, gridSize: { x: 3000, y: 1500 }
+      },
       peripherals: []
     };
   }
@@ -23,7 +24,7 @@ describe("<BotTrail/>", () => {
     const p = fakeProps();
     p.mapTransformProps.quadrant = 2;
     const wrapper = shallow(<BotTrail {...p} />);
-    const lines = wrapper.find(".virtual-bot-trail").find("line");
+    const lines = wrapper.find("#trail").find("line");
     expect(lines.length).toEqual(4);
     expect(lines.first().props()).toEqual({
       id: "trail-line-1",
@@ -44,7 +45,7 @@ describe("<BotTrail/>", () => {
   it("shows default length trail", () => {
     sessionStorage[VirtualTrail.length] = undefined;
     const wrapper = shallow(<BotTrail {...fakeProps()} />);
-    const lines = wrapper.find(".virtual-bot-trail").find("line");
+    const lines = wrapper.find("#trail").find("line");
     expect(lines.length).toEqual(5);
   });
 
@@ -53,13 +54,13 @@ describe("<BotTrail/>", () => {
     const p = fakeProps();
     p.position = { x: 4, y: 4, z: 0 };
     const wrapper = shallow(<BotTrail {...p} />);
-    const lines = wrapper.find(".virtual-bot-trail").find("line");
+    const lines = wrapper.find("#trail").find("line");
     expect(lines.length).toEqual(4);
   });
 
   it("shows water", () => {
     const wrapper = shallow(<BotTrail {...fakeProps()} />);
-    const circles = wrapper.find(".virtual-bot-trail").find("circle");
+    const circles = wrapper.find("#trail").find("circle");
     expect(circles.length).toEqual(2);
   });
 
@@ -68,7 +69,7 @@ describe("<BotTrail/>", () => {
     p.position = { x: 4, y: 4, z: 0 };
     p.peripherals = [{ label: "water", value: true }];
     const wrapper = shallow(<BotTrail {...p} />);
-    const water = wrapper.find(".virtual-bot-trail").find("circle").last();
+    const water = wrapper.find("#trail").find("circle").last();
     expect(water.props().r).toEqual(21);
   });
 

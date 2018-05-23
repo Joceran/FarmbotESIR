@@ -4,9 +4,7 @@ import * as _ from "lodash";
 import { success, warning, info, error } from "farmbot-toastr";
 import { getDevice } from "../device";
 import { Log, Everything } from "../interfaces";
-import {
-  GithubRelease, MoveRelProps, MinOsFeatureLookup, SourceFwConfig, Axis
-} from "./interfaces";
+import { GithubRelease, MoveRelProps, MinOsFeatureLookup, SourceFwConfig } from "./interfaces";
 import { Thunk, ReduxAction } from "../redux/interfaces";
 import { McuParams, Configuration, rpcRequest } from "farmbot";
 import { Sequence } from "../sequences/interfaces";
@@ -23,7 +21,6 @@ import { edit, save as apiSave } from "../api/crud";
 import { getFbosConfig } from "../resources/selectors_by_kind";
 import { FbosConfig } from "../config_storage/fbos_configs";
 import { FirmwareConfig } from "../config_storage/firmware_configs";
-import { CONFIG_DEFAULTS } from "farmbot/dist/config";
 
 const ON = 1, OFF = 0;
 export type ConfigKey = keyof McuParams;
@@ -49,11 +46,10 @@ export function isLog(x: any): x is Log {
     return false;
   }
 }
-export const commandErr =
-  (noun = "Command") => () => error(t(`${noun} failed`));
+const commandErr = (_noun = "Command") => () => { };
 
 export const commandOK = (noun = "Command") => () => {
-  const msg = t(noun) + t(" request sent to device.");
+  const msg = noun + " request sent to device.";
   success(msg, t("Request sent"));
 };
 
@@ -94,7 +90,7 @@ export function emergencyLock() {
 
 export function emergencyUnlock() {
   const noun = "Emergency unlock";
-  if (confirm(t(`Are you sure you want to unlock the device?`))) {
+  if (confirm(`Are you sure you want to unlock the device?`)) {
     getDevice()
       .emergencyUnlock()
       .then(commandOK(noun), commandErr(noun));
@@ -112,9 +108,11 @@ export function sync(): Thunk {
     if (IS_OK) {
       getDevice()
         .sync()
-        // TODO: Probably wrong. Fix when there is time to QA - RC 5/2/18
-        .then(() => { commandOK(noun); })
-        .catch(commandErr(noun));
+        .then(() => {
+          commandOK(noun);
+        }).catch(() => {
+          commandErr(noun);
+        });
     } else {
       if (getState()
         .bot
@@ -235,7 +233,7 @@ export function MCUFactoryReset() {
   if (!confirm(t(Content.MCU_RESET_ALERT))) {
     return;
   }
-  return getDevice().resetMCU().catch(commandErr("MCU Reset"));
+  return getDevice().resetMCU();
 }
 
 export function settingToggle(
@@ -296,13 +294,6 @@ export function homeAll(speed: number) {
   const noun = "'Home All' command";
   getDevice()
     .home({ axis: "all", speed })
-    .catch(commandErr(noun));
-}
-
-export function findHome(axis: Axis, speed = CONFIG_DEFAULTS.speed) {
-  const noun = "'Find Home' command";
-  getDevice()
-    .findHome({ axis, speed })
     .catch(commandErr(noun));
 }
 

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { t } from "i18next";
-import { Button, Classes, MenuItem, Alignment } from "@blueprintjs/core";
-import { Select, ItemRenderer } from "@blueprintjs/select";
+import { Button, Classes, MenuItem } from "@blueprintjs/core";
+import { ISelectItemRendererProps, Select } from "@blueprintjs/labs";
 import { DropDownItem } from "./fb_select";
 
 const SelectComponent = Select.ofType<DropDownItem | undefined>();
@@ -38,13 +38,12 @@ export class FilterSearch extends React.Component<Props, Partial<State>> {
       onItemSelect={this.handleValueChange}
       popoverProps={{ popoverClassName: minimal ? Classes.MINIMAL : "" }}>
       <Button
-        alignText={Alignment.LEFT}
+        rightIconName="double-caret-vertical"
         text={item ? item.label : t("(No selection)")} />
-      <i className="fa fa-caret-down fa-lg" />
     </SelectComponent>;
   }
 
-  styleFor(item: Partial<DropDownItem>): string {
+  styleFor(item: DropDownItem): string {
     const styles = ["filter-search-item"];
     if (Object.is(item, this.props.nullChoice)) {
       styles.push("filter-search-item-none");
@@ -55,16 +54,14 @@ export class FilterSearch extends React.Component<Props, Partial<State>> {
     return styles.join(" ");
   }
 
-  private default: ItemRenderer<DropDownItem | undefined> =
-    (item, params) => {
-      const { handleClick, index } = params;
-      const i: Partial<DropDownItem> = item || { label: "" };
-      return <MenuItem
-        className={this.styleFor(i)}
-        key={index + (i.label || "")}
-        onClick={handleClick}
-        text={`${i.label}`} />;
-    }
+  private default = (params: ISelectItemRendererProps<DropDownItem>) => {
+    const { handleClick, item, index } = params;
+    return <MenuItem
+      className={this.styleFor(item)}
+      key={index + item.label}
+      onClick={handleClick}
+      text={`${item.label}`} />;
+  }
 
   private filter(query: string, item: DropDownItem) {
     if (item.heading) { return true; }

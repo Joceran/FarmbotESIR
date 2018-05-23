@@ -30,14 +30,12 @@ describe("<EditFarmEvent />", () => {
       farmEvents: [],
       getFarmEvent: () => fakeFarmEvent("Sequence", 1),
       findExecutable: () => sequence,
-      timeOffset: 0,
-      autoSyncEnabled: false,
-      allowRegimenBackscheduling: false,
+      timeOffset: 0
     };
   }
 
   it("renders", () => {
-    const wrapper = mount(<EditFarmEvent {...fakeProps()} />);
+    const wrapper = mount(<EditFarmEvent {...fakeProps() } />);
     ["Edit Farm Event", "Sequence or Regimen", "fake", "Save"]
       .map(string => expect(wrapper.text()).toContain(string));
     const deleteBtn = wrapper.find("button").last();
@@ -48,7 +46,7 @@ describe("<EditFarmEvent />", () => {
   it("redirects", () => {
     const p = fakeProps();
     p.getFarmEvent = jest.fn();
-    const wrapper = mount(<EditFarmEvent {...p} />);
+    const wrapper = mount(<EditFarmEvent {...p } />);
     expect(wrapper.text()).toContain("Loading");
   });
 });

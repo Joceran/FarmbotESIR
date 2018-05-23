@@ -3,7 +3,9 @@ const mockDevice = {
   updateFarmware: jest.fn(() => Promise.resolve()),
   removeFarmware: jest.fn(() => Promise.resolve()),
   execScript: jest.fn(() => Promise.resolve()),
-  installFirstPartyFarmware: jest.fn(() => Promise.resolve())
+  installFirstPartyFarmware: jest.fn(() => {
+    return Promise.resolve({});
+  })
 };
 
 jest.mock("../../device", () => ({
@@ -15,7 +17,6 @@ import { mount, shallow } from "enzyme";
 import { FarmwarePanel, FarmwareConfigMenu } from "../farmware_panel";
 import { FWProps, FarmwareConfigMenuProps } from "../interfaces";
 import { fakeFarmwares } from "../../__test_support__/fake_farmwares";
-import { getDevice } from "../../device";
 
 describe("<FarmwarePanel/>: actions", () => {
   beforeEach(() => {
@@ -40,7 +41,7 @@ describe("<FarmwarePanel/>: actions", () => {
     expect(buttons.at(0).text()).toEqual("Install");
     panel.setState({ packageUrl: "install this" });
     buttons.at(0).simulate("click");
-    expect(getDevice().installFarmware).toHaveBeenCalledWith("install this");
+    expect(mockDevice.installFarmware).toHaveBeenCalledWith("install this");
   });
 
   it("farmware not selected", () => {
@@ -48,18 +49,12 @@ describe("<FarmwarePanel/>: actions", () => {
     panel.setState({ selectedFarmware: undefined });
     const updateBtn = panel.find("button").at(3);
     expect(updateBtn.text()).toEqual("Update");
-    window.alert = jest.fn();
     updateBtn.simulate("click");
-    expect(window.alert).toHaveBeenCalledWith(
-      expect.stringContaining("a farmware first"));
-    jest.clearAllMocks();
-    expect(getDevice().updateFarmware).not.toHaveBeenCalled();
+    expect(mockDevice.updateFarmware).not.toHaveBeenCalled();
     const installBtn = panel.find("button").at(0);
     expect(installBtn.text()).toEqual("Install");
     installBtn.simulate("click");
-    expect(window.alert).toHaveBeenCalledWith(
-      expect.stringContaining("a URL"));
-    expect(getDevice().installFarmware).not.toHaveBeenCalled();
+    expect(mockDevice.installFarmware).not.toHaveBeenCalled();
   });
 
   it("calls update", () => {
@@ -68,7 +63,7 @@ describe("<FarmwarePanel/>: actions", () => {
     expect(buttons.at(3).text()).toEqual("Update");
     panel.setState({ selectedFarmware: "update this" });
     buttons.at(3).simulate("click");
-    expect(getDevice().updateFarmware).toHaveBeenCalledWith("update this");
+    expect(mockDevice.updateFarmware).toHaveBeenCalledWith("update this");
   });
 
   it("calls remove", () => {
@@ -77,17 +72,16 @@ describe("<FarmwarePanel/>: actions", () => {
     expect(removeBtn.text()).toEqual("Remove");
     panel.setState({ selectedFarmware: "remove this" });
     removeBtn.simulate("click");
-    expect(getDevice().removeFarmware).toHaveBeenCalledTimes(1);
-    expect(getDevice().removeFarmware).toHaveBeenCalledWith("remove this");
+    expect(mockDevice.removeFarmware).toHaveBeenCalledTimes(1);
+    expect(mockDevice.removeFarmware).toHaveBeenCalledWith("remove this");
     panel.setState({ selectedFarmware: "first-party farmware" });
-    window.confirm = jest.fn();
     removeBtn.simulate("click");
-    expect(window.confirm).toHaveBeenCalledWith(expect.stringContaining("you sure"));
-    expect(getDevice().removeFarmware).toHaveBeenCalledTimes(1);
-    window.confirm = () => true;
+    expect(mockDevice.removeFarmware).toHaveBeenCalledTimes(1);
+    // tslint:disable-next-line:no-any
+    (global as any).confirm = () => true;
     removeBtn.simulate("click");
-    expect(getDevice().removeFarmware).toHaveBeenCalledTimes(2);
-    expect(getDevice().removeFarmware).toHaveBeenLastCalledWith("first-party farmware");
+    expect(mockDevice.removeFarmware).toHaveBeenCalledTimes(2);
+    expect(mockDevice.removeFarmware).toHaveBeenLastCalledWith("first-party farmware");
   });
 
   it("calls run", () => {
@@ -96,7 +90,7 @@ describe("<FarmwarePanel/>: actions", () => {
     expect(buttons.at(4).text()).toEqual("Run");
     panel.setState({ selectedFarmware: "run this" });
     buttons.at(4).simulate("click");
-    expect(getDevice().execScript).toHaveBeenCalledWith("run this");
+    expect(mockDevice.execScript).toHaveBeenCalledWith("run this");
   });
 
   it("sets url to install", () => {
@@ -206,10 +200,12 @@ describe("<FarmwareConfigMenu />", () => {
   }
 
   it("calls install 1st party farmwares", () => {
-    const wrapper = mount(<FarmwareConfigMenu {...fakeProps()} />);
+    const wrapper = mount(
+      <FarmwareConfigMenu {...fakeProps()} />);
     const button = wrapper.find("button").first();
     expect(button.hasClass("fa-download")).toBeTruthy();
     button.simulate("click");
+    expect(mockDevice.installFirstPartyFarmware).toHaveBeenCalled();
   });
 
   it("1st party farmwares all installed", () => {
@@ -220,7 +216,7 @@ describe("<FarmwareConfigMenu />", () => {
     const button = wrapper.find("button").first();
     expect(button.hasClass("fa-download")).toBeTruthy();
     button.simulate("click");
-    expect(getDevice().installFirstPartyFarmware).not.toHaveBeenCalled();
+    expect(mockDevice.installFirstPartyFarmware).not.toHaveBeenCalled();
   });
 
   it("toggles 1st party farmware display", () => {

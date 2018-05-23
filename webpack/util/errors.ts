@@ -10,19 +10,12 @@ export interface AxiosErrorResponse {
   };
 }
 
-const mapper = (v: string, k: string) => {
-  // "Reason: Explanation lorem ipsum dolor ipsum."
-  const reason = _.capitalize(("" + k).split("_").join(" "));
-  const explanation = v.toString();
-
-  return t(`${reason}: ${explanation}`);
-};
-
 /** Concats and capitalizes all of the error key/value
  *  pairs returned by the /api/xyz endpoint. */
 export function prettyPrintApiErrors(err: AxiosErrorResponse) {
-  const errors = safelyFetchErrors(err);
-  return _.map(errors, mapper).join(" ");
+  return _.map(safelyFetchErrors(err),
+    (v, k) => `${("" + k).split("_").join(" ")}: ${v.toString()}`.toLowerCase())
+    .map(str => _.capitalize(str)).join(" ");
 }
 
 function safelyFetchErrors(err: AxiosErrorResponse): Dictionary<string> {

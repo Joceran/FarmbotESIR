@@ -26,17 +26,9 @@ describe Users::Update do
 
   it 'changes email addresses' do
     u = FactoryBot.create(:user)
-    original_token = u.confirmation_token
     expect(u.unconfirmed_email?).to be false
     Users::Update.run!(user: u, email: "example@mailinator.com")
-
-    if User::SKIP_EMAIL_VALIDATION
-      expect(u.unconfirmed_email?).to be false
-      expect(u.email).to eq("example@mailinator.com")
-    else
-      expect(u.unconfirmed_email?).to be true
-      expect(u.unconfirmed_email).to eq("example@mailinator.com")
-      expect(u.confirmation_token).not_to eq(original_token)
-    end
+    expect(u.unconfirmed_email?).to be true
+    expect(u.unconfirmed_email).to eq("example@mailinator.com")
   end
 end

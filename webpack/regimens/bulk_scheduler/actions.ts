@@ -3,12 +3,11 @@ import { t } from "i18next";
 import { error, warning } from "farmbot-toastr";
 import { ReduxAction, Thunk } from "../../redux/interfaces";
 import { ToggleDayParams } from "./interfaces";
-import { findSequence, findRegimen } from "../../resources/selectors";
+import { assertUuid, findSequence, findRegimen } from "../../resources/selectors";
 import { groupRegimenItemsByWeek } from "./group_regimen_items_by_week";
 import { defensiveClone } from "../../util";
 import { overwrite } from "../../api/crud";
 import { Actions } from "../../constants";
-import { assertUuid } from "../../resources/util";
 
 export function pushWeek() {
   return {
@@ -87,7 +86,7 @@ export function commitBulkEditor(): Thunk {
           return error(t("No day(s) selected."));
         }
       } else {
-        return error(t("Select a sequence from the dropdown first."),t("Error"));
+        return error(t("Select a sequence from the dropdown first."));
       }
     } else {
       return error(t("Select a regimen first or create one."));

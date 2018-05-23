@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_21_195953) do
+ActiveRecord::Schema.define(version: 20180403211523) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "hstore"
   enable_extension "plpgsql"
+  enable_extension "hstore"
 
   create_table "delayed_jobs", id: :serial, force: :cascade do |t|
     t.integer "priority", default: 0, null: false
@@ -48,8 +48,6 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
     t.datetime "last_saw_api"
     t.datetime "last_saw_mq"
     t.string "fbos_version", limit: 15
-    t.datetime "throttled_until"
-    t.datetime "throttled_at"
     t.index ["timezone"], name: "index_devices_on_timezone"
   end
 
@@ -60,7 +58,6 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
     t.bigint "primary_node_id", null: false
     t.string "kind", limit: 50
     t.string "value", limit: 300
-    t.index ["kind", "value"], name: "index_edge_nodes_on_kind_and_value"
     t.index ["primary_node_id"], name: "index_edge_nodes_on_primary_node_id"
     t.index ["sequence_id"], name: "index_edge_nodes_on_sequence_id"
   end
@@ -74,7 +71,6 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
     t.string "executable_type", limit: 280
     t.integer "executable_id"
     t.index ["device_id"], name: "index_farm_events_on_device_id"
-    t.index ["end_time"], name: "index_farm_events_on_end_time"
     t.index ["executable_type", "executable_id"], name: "index_farm_events_on_executable_type_and_executable_id"
   end
 
@@ -200,10 +196,10 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
     t.integer "pin_guard_5_pin_nr", default: 0
     t.integer "pin_guard_5_time_out", default: 60
     t.boolean "api_migrated", default: false
-    t.integer "movement_invert_2_endpoints_x", default: 0
-    t.integer "movement_invert_2_endpoints_y", default: 0
-    t.integer "movement_invert_2_endpoints_z", default: 0
     t.index ["device_id"], name: "index_firmware_configs_on_device_id"
+  end
+
+  create_table "generic_pointers", id: :serial, force: :cascade do |t|
   end
 
   create_table "global_configs", force: :cascade do |t|
@@ -211,7 +207,6 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
     t.text "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["key"], name: "index_global_configs_on_key"
   end
 
   create_table "images", id: :serial, force: :cascade do |t|
@@ -248,14 +243,11 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
     t.string "type", limit: 10, default: "info"
     t.integer "major_version"
     t.integer "minor_version"
-    t.integer "verbosity", default: 1
+    t.integer "verbosity"
     t.integer "x"
     t.integer "y"
     t.integer "z"
-    t.index ["created_at"], name: "index_logs_on_created_at"
     t.index ["device_id"], name: "index_logs_on_device_id"
-    t.index ["type"], name: "index_logs_on_type"
-    t.index ["verbosity"], name: "index_logs_on_verbosity"
   end
 
   create_table "peripherals", id: :serial, force: :cascade do |t|
@@ -266,7 +258,6 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
     t.datetime "updated_at", null: false
     t.integer "mode", default: 0
     t.index ["device_id"], name: "index_peripherals_on_device_id"
-    t.index ["mode"], name: "index_peripherals_on_mode"
   end
 
   create_table "pin_bindings", force: :cascade do |t|
@@ -279,17 +270,12 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
     t.index ["sequence_id"], name: "index_pin_bindings_on_sequence_id"
   end
 
-  create_table "plant_templates", force: :cascade do |t|
-    t.bigint "saved_garden_id", null: false
-    t.bigint "device_id", null: false
-    t.float "radius", default: 25.0, null: false
-    t.float "x", null: false
-    t.float "y", null: false
-    t.float "z", default: 0.0, null: false
-    t.string "name", default: "untitled", null: false
-    t.string "openfarm_slug", limit: 280, default: "null", null: false
-    t.index ["device_id"], name: "index_plant_templates_on_device_id"
-    t.index ["saved_garden_id"], name: "index_plant_templates_on_saved_garden_id"
+  create_table "plants", id: :serial, force: :cascade do |t|
+    t.string "openfarm_slug", limit: 280, default: "50", null: false
+    t.datetime "created_at"
+    t.datetime "planted_at"
+    t.string "plant_stage", limit: 10, default: "planned"
+    t.index ["created_at"], name: "index_plants_on_created_at"
   end
 
   create_table "points", id: :serial, force: :cascade do |t|
@@ -303,18 +289,10 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
     t.datetime "updated_at", null: false
     t.string "name", default: "untitled", null: false
     t.string "pointer_type", limit: 280, null: false
-    t.datetime "planted_at"
-    t.string "openfarm_slug", limit: 280, default: "50", null: false
-    t.string "plant_stage", limit: 10, default: "planned"
-    t.integer "tool_id"
-    t.integer "pullout_direction", default: 0
-    t.datetime "migrated_at"
-    t.datetime "discarded_at"
+    t.integer "pointer_id", null: false
     t.index ["device_id"], name: "index_points_on_device_id"
-    t.index ["discarded_at"], name: "index_points_on_discarded_at"
-    t.index ["id", "pointer_type"], name: "index_points_on_id_and_pointer_type"
     t.index ["meta"], name: "index_points_on_meta", using: :gin
-    t.index ["tool_id"], name: "index_points_on_tool_id"
+    t.index ["pointer_type", "pointer_id"], name: "index_points_on_pointer_type_and_pointer_id"
   end
 
   create_table "primary_nodes", force: :cascade do |t|
@@ -348,14 +326,6 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
     t.string "name", limit: 280
     t.integer "device_id"
     t.index ["device_id"], name: "index_regimens_on_device_id"
-  end
-
-  create_table "saved_gardens", force: :cascade do |t|
-    t.string "name", null: false
-    t.bigint "device_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["device_id"], name: "index_saved_gardens_on_device_id"
   end
 
   create_table "sensor_readings", force: :cascade do |t|
@@ -400,8 +370,14 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["device_id"], name: "index_token_issuances_on_device_id"
-    t.index ["exp"], name: "index_token_issuances_on_exp"
-    t.index ["jti", "device_id"], name: "index_token_issuances_on_jti_and_device_id"
+  end
+
+  create_table "tool_slots", id: :serial, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "tool_id"
+    t.integer "pullout_direction", default: 0
+    t.index ["tool_id"], name: "index_tool_slots_on_tool_id"
   end
 
   create_table "tools", id: :serial, force: :cascade do |t|
@@ -430,7 +406,6 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
     t.index ["agreed_to_terms_at"], name: "index_users_on_agreed_to_terms_at"
-    t.index ["confirmation_token"], name: "index_users_on_confirmation_token"
     t.index ["device_id"], name: "index_users_on_device_id"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
@@ -473,8 +448,6 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
     t.string "photo_filter_begin"
     t.string "photo_filter_end"
     t.boolean "discard_unsaved", default: false
-    t.boolean "xy_swap", default: false
-    t.boolean "home_button_homing", default: false
     t.index ["device_id"], name: "index_web_app_configs_on_device_id"
   end
 
@@ -496,53 +469,9 @@ ActiveRecord::Schema.define(version: 2018_05_21_195953) do
   add_foreign_key "pin_bindings", "devices"
   add_foreign_key "pin_bindings", "sequences"
   add_foreign_key "points", "devices"
-  add_foreign_key "points", "tools"
   add_foreign_key "primary_nodes", "sequences"
   add_foreign_key "sensor_readings", "devices"
   add_foreign_key "sensors", "devices"
   add_foreign_key "token_issuances", "devices"
-
-  create_view "in_use_tools",  sql_definition: <<-SQL
-      SELECT tools.id AS tool_id,
-      tools.name AS tool_name,
-      sequences.name AS sequence_name,
-      sequences.id AS sequence_id,
-      sequences.device_id
-     FROM ((edge_nodes
-       JOIN sequences ON ((edge_nodes.sequence_id = sequences.id)))
-       JOIN tools ON (((edge_nodes.value)::integer = tools.id)))
-    WHERE ((edge_nodes.kind)::text = 'tool_id'::text);
-  SQL
-
-  create_view "sequence_usage_reports",  sql_definition: <<-SQL
-      SELECT sequences.id AS sequence_id,
-      ( SELECT count(*) AS count
-             FROM edge_nodes
-            WHERE (((edge_nodes.kind)::text = 'sequence_id'::text) AND ((edge_nodes.value)::integer = sequences.id))) AS edge_node_count,
-      ( SELECT count(*) AS count
-             FROM farm_events
-            WHERE ((farm_events.executable_id = sequences.id) AND ((farm_events.executable_type)::text = 'Sequence'::text))) AS farm_event_count,
-      ( SELECT count(*) AS count
-             FROM regimen_items
-            WHERE (regimen_items.sequence_id = sequences.id)) AS regimen_items_count
-     FROM sequences;
-  SQL
-
-  create_view "in_use_points",  sql_definition: <<-SQL
-      SELECT points.x,
-      points.y,
-      points.z,
-      sequences.id AS sequence_id,
-      edge_nodes.id AS edge_node_id,
-      points.device_id,
-      (edge_nodes.value)::integer AS point_id,
-      points.pointer_type,
-      points.name AS pointer_name,
-      sequences.name AS sequence_name
-     FROM ((edge_nodes
-       JOIN sequences ON ((edge_nodes.sequence_id = sequences.id)))
-       JOIN points ON (((edge_nodes.value)::integer = points.id)))
-    WHERE ((edge_nodes.kind)::text = 'pointer_id'::text);
-  SQL
-
+  add_foreign_key "tool_slots", "tools"
 end

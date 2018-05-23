@@ -1,4 +1,3 @@
-# Various convinience features and flags.
 class WebAppConfig < ApplicationRecord
   belongs_to :device
 

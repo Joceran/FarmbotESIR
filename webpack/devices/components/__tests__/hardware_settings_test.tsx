@@ -25,7 +25,6 @@ describe("<HardwareSettings />", () => {
         return { value: bot.hardware.mcu_params[x], consistent: true };
       },
       firmwareConfig: undefined,
-      shouldDisplay: jest.fn(),
     };
   };
 

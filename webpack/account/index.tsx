@@ -11,8 +11,6 @@ import { updateNO } from "../resources/actions";
 import { deleteUser } from "./actions";
 import { success } from "farmbot-toastr/dist";
 import { LabsFeatures } from "./labs/labs_features";
-import { ExportAccountPanel } from "./components/export_account_panel";
-import { requestAccountExport } from "./request_account_export";
 
 const KEYS: (keyof User)[] = ["id", "name", "email", "created_at", "updated_at"];
 
@@ -34,7 +32,7 @@ export class Account extends React.Component<Props, State> {
    *                     changed, but not which field).
    *
    * This is a quick fix until we can dedicate resources to implement
-   * reversible edits to TaggedResource. I don't want to do anything weird like
+   * reversable edits to TaggedResource. I don't want to do anything weird like
    * store `TaggedResource`s in `this.state` (risk of storing invalid UUIDs).
    *
    * TODO: Implement attribute level dirty tracking
@@ -55,7 +53,7 @@ export class Account extends React.Component<Props, State> {
   doSave = () => {
     const conf = this.state.warnThem ?
       t("Please check your email to confirm email address changes") : "Saved";
-    success(t(conf), t("Success"));
+    success(t(conf));
     this.setState({ warnThem: false });
   }
   onSave = () => this
@@ -64,9 +62,6 @@ export class Account extends React.Component<Props, State> {
     .then(this.doSave, updateNO);
 
   render() {
-    const deleteAcct =
-      (password: string) => this.props.dispatch(deleteUser({ password }));
-
     return <Page className="account">
       <Col xs={12} sm={6} smOffset={3}>
         <Row>
@@ -82,10 +77,10 @@ export class Account extends React.Component<Props, State> {
           <LabsFeatures />
         </Row>
         <Row>
-          <DeleteAccount onClick={deleteAcct} />
-        </Row>
-        <Row>
-          <ExportAccountPanel onClick={requestAccountExport} />
+          <DeleteAccount
+            onClick={(password) => this
+              .props
+              .dispatch(deleteUser({ password }))} />
         </Row>
       </Col>
     </Page>;

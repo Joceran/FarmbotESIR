@@ -2,13 +2,6 @@ jest.mock("react-redux", () => ({
   connect: jest.fn()
 }));
 
-jest.mock("../../../history", () => ({
-  history: {
-    push: jest.fn(),
-  },
-  getPathArray: () => ""
-}));
-
 const mockErr = jest.fn();
 jest.mock("farmbot-toastr", () => ({ error: mockErr }));
 
@@ -42,9 +35,9 @@ describe("<EditPlantInfo />", () => {
     const p = fakeProps();
     p.dispatch = jest.fn(() => { return Promise.resolve(); });
     const wrapper = mount(<EditPlantInfo {...p} />);
-    const deleteButton = wrapper.find("button").at(2);
-    expect(deleteButton.text()).toEqual("Delete");
+    const deleteButton = wrapper.find("button").at(1);
     expect(deleteButton.props().hidden).toBeFalsy();
+    expect(deleteButton.text()).toEqual("Delete");
     deleteButton.simulate("click");
     expect(p.dispatch).toHaveBeenCalled();
   });

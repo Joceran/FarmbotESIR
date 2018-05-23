@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as _ from "lodash";
 import { MapTransformProps } from "../interfaces";
-import { transformXY } from "../util";
+import { getXYFromQuadrant } from "../util";
 import { BotPosition } from "../../../devices/interfaces";
 import { Color } from "../../../ui";
 
@@ -38,8 +38,9 @@ export interface BotTrailProps {
 }
 
 export function BotTrail(props: BotTrailProps) {
+  const { quadrant, gridSize } = props.mapTransformProps;
   const toQ = (ox: number, oy: number) =>
-    transformXY(ox, oy, props.mapTransformProps);
+    getXYFromQuadrant(ox, oy, quadrant, gridSize);
 
   const { x, y } = props.position;
   const watering = !!_.first(props.peripherals
@@ -48,7 +49,7 @@ export function BotTrail(props: BotTrailProps) {
 
   const array = getNewTrailArray({ coord: { x, y }, water: 0 }, watering);
 
-  return <g className="virtual-bot-trail">
+  return <g id="trail">
     {array.map((cur: TrailRecord, i: number) => {
       const prev = (array[i - 1] || { coord: undefined }).coord; // prev coord
       const opacity = _.round(Math.max(0.25, i / (array.length - 1)), 2);

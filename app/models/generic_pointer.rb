@@ -1,6 +1,7 @@
-# Used by third party farmwares (eg: weed-detection) to mark points on a map.
-class GenericPointer < Point
-  def name_used_when_syncing
-    "Point"
+class GenericPointer < ApplicationRecord
+  has_one :point, as: :pointer
+
+  def broadcast?
+    false
   end
 end

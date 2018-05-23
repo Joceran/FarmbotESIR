@@ -1,5 +1,6 @@
 import { BotState } from "../devices/interfaces";
-import { TaggedUser, TaggedLog } from "../resources/tagged_resources";
+import { Log } from "../interfaces";
+import { TaggedUser } from "../resources/tagged_resources";
 
 export interface NavButtonProps {
   user: TaggedUser | undefined;
@@ -11,7 +12,7 @@ export interface NavButtonProps {
 
 export interface NavBarProps {
   consistent: boolean;
-  logs: TaggedLog[];
+  logs: Log[];
   bot: BotState;
   user: TaggedUser | undefined;
   dispatch: Function;
@@ -33,7 +34,7 @@ export interface MobileMenuProps {
 
 export interface TickerListProps {
   toggle: (property: keyof NavBarState) => ToggleEventHandler;
-  logs: TaggedLog[]
+  logs: Log[]
   tickerListOpen: boolean;
   timeOffset: number;
 }

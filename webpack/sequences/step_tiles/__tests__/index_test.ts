@@ -31,12 +31,10 @@ describe("remove()", () => {
   it("deletes step with confirmation", () => {
     const dispatch = jest.fn();
     mockStorj[BooleanSetting.confirm_step_deletion] = true;
-    window.confirm = jest.fn();
     remove({ index: 0, dispatch, sequence: fakeSequence() });
-    expect(window.confirm).toHaveBeenCalledWith(
-      expect.stringContaining("delete this step?"));
     expect(dispatch).not.toHaveBeenCalled();
-    window.confirm = jest.fn(() => true);
+    // tslint:disable-next-line:no-any
+    (global as any).confirm = () => true;
     remove({ index: 0, dispatch, sequence: fakeSequence() });
     expect(dispatch).toHaveBeenCalled();
   });

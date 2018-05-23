@@ -2,7 +2,7 @@ import * as React from "react";
 import { TaggedImage } from "../../resources/tagged_resources";
 import { CameraCalibrationData, BotOriginQuadrant } from "../interfaces";
 import { MapTransformProps } from "./interfaces";
-import { transformXY } from "./util";
+import { getXYFromQuadrant } from "./util";
 import { isNumber, round } from "lodash";
 
 const PRECISION = 3; // Number of decimals for image placement coordinates
@@ -81,12 +81,11 @@ interface TransformProps {
   qCoords: { qx: number, qy: number };
   size: { x: number, y: number };
   imageOrigin: string;
-  xySwap: boolean;
 }
 
 /* Image transform string. Flip and place image at the correct map location. */
 const transform = (props: TransformProps): string => {
-  const { quadrant, qCoords, size, imageOrigin, xySwap } = props;
+  const { quadrant, qCoords, size, imageOrigin } = props;
   const { qx, qy } = qCoords;
   const orginAdjusted = originAdjustment(imageOrigin);
   const quadrantAdjusted = quadrantAdjustment(quadrant);
@@ -102,11 +101,7 @@ const transform = (props: TransformProps): string => {
     x: round(flip.x * qx + toZero.x, PRECISION),
     y: round(flip.y * qy + toZero.y, PRECISION)
   };
-  const xySwapTransform = xySwap
-    ? ` rotate(90) scale(${-1}, ${1}) translate(${-size.y}, ${-size.y})`
-    : "";
-  return `scale(${flip.x}, ${flip.y}) translate(${translate.x}, ${translate.y})`
-    + xySwapTransform;
+  return `scale(${flip.x}, ${flip.y}) translate(${translate.x}, ${translate.y})`;
 };
 
 export interface MapImageProps {
@@ -128,7 +123,7 @@ export function MapImage(props: MapImageProps) {
   const imageOffsetX = parse(offset.x);
   const imageOffsetY = parse(offset.y);
   const imageOrigin = origin ? origin.split("\"").join("") : undefined;
-  const { quadrant, xySwap } = props.mapTransformProps;
+  const { quadrant, gridSize } = props.mapTransformProps;
 
   /* Check if the image exists. */
   if (image) {
@@ -148,8 +143,8 @@ export function MapImage(props: MapImageProps) {
         x: x + imageOffsetX - size.x / 2,
         y: y + imageOffsetY - size.y / 2
       };
-      const qCoords = transformXY(o.x, o.y, props.mapTransformProps);
-      const transformProps = { quadrant, qCoords, size, imageOrigin, xySwap };
+      const qCoords = getXYFromQuadrant(o.x, o.y, quadrant, gridSize);
+      const transformProps = { quadrant, qCoords, size, imageOrigin };
       return <image
         xlinkHref={imageUrl}
         height={size.y} width={size.x} x={0} y={0}

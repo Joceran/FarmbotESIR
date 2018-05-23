@@ -24,8 +24,7 @@ export class EditPlantInfo extends PlantInfoBase {
       <PlantPanel
         info={info}
         onDestroy={this.destroy}
-        updatePlant={this.updatePlant}
-        dispatch={this.props.dispatch} />
+        updatePlant={this.updatePlant} />
     </div>;
   }
 

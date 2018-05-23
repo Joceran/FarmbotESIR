@@ -1,13 +1,18 @@
 import {
-  BotState, HardwareState, ControlPanelState, OsUpdateInfo,
+  BotState, HardwareState, Xyz, ControlPanelState, OsUpdateInfo,
   MinOsFeatureLookup
 } from "./interfaces";
 import { generateReducer } from "../redux/generate_reducer";
 import { Actions } from "../constants";
-import { maybeNegateStatus } from "../connectivity/maybe_negate_status";
+import { EncoderDisplay } from "../controls/interfaces";
+import { BooleanSetting } from "../session_keys";
+import {
+  maybeNegateStatus, maybeNegateConsistency
+} from "../connectivity/maybe_negate_status";
 import { EdgeStatus } from "../connectivity/interfaces";
 import { ReduxAction } from "../redux/interfaces";
 import { connectivityReducer } from "../connectivity/reducer";
+import { BooleanConfigKey } from "../config_storage/web_app_configs";
 import { versionOK } from "../util";
 import { EXPECTED_MAJOR, EXPECTED_MINOR } from "./actions";
 
@@ -74,6 +79,20 @@ export let initialState = (): BotState => ({
     "user.api": undefined
   }
 });
+
+/** Translate X/Y/Z to the name that is used in `localStorage` */
+export const INVERSION_MAPPING: Record<Xyz, BooleanConfigKey> = {
+  x: BooleanSetting.x_axis_inverted,
+  y: BooleanSetting.y_axis_inverted,
+  z: BooleanSetting.z_axis_inverted,
+};
+
+/** Translate `encode_visibility` key name to the name that is
+ * used in `localStorage` */
+export const ENCODER_MAPPING: Record<EncoderDisplay, BooleanConfigKey> = {
+  raw_encoders: BooleanSetting.raw_encoders,
+  scaled_encoders: BooleanSetting.scaled_encoders,
+};
 
 export let botReducer = generateReducer<BotState>(initialState(), afterEach)
   .add<boolean>(Actions.SET_CONSISTENCY, (s, a) => {
@@ -145,7 +164,7 @@ export let botReducer = generateReducer<BotState>(initialState(), afterEach)
       fbosVersion: informational_settings.controller_version,
       autoSync: !!state.hardware.configuration.auto_sync
     };
-    state.consistent = info.consistent;
+    state.consistent = maybeNegateConsistency(info);
     info.consistent = state.consistent;
 
     const nextSyncStatus = maybeNegateStatus(info);
@@ -157,10 +176,6 @@ export let botReducer = generateReducer<BotState>(initialState(), afterEach)
   })
   .add<void>(Actions.STASH_STATUS, (s) => {
     stash(s);
-    return s;
-  })
-  .add<void>(Actions._RESOURCE_NO, (s) => {
-    unstash(s);
     return s;
   })
   .add<EdgeStatus>(Actions.NETWORK_EDGE_CHANGE, (s, a) => {

@@ -12,8 +12,6 @@ export const BooleanSetting: Record<BooleanConfigKey, BooleanConfigKey> = {
   show_spread: "show_spread",
   show_farmbot: "show_farmbot",
   show_images: "show_images",
-  xy_swap: "xy_swap",
-  home_button_homing: "home_button_homing",
 
   /** "Labs" feature names. (App preferences) */
   stub_config: "stub_config",

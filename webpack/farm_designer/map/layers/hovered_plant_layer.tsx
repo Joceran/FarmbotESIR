@@ -1,7 +1,7 @@
 import * as React from "react";
 import { TaggedPlantPointer } from "../../../resources/tagged_resources";
 import { DesignerState } from "../../interfaces";
-import { transformXY, round } from "../util";
+import { getXYFromQuadrant, round } from "../util";
 import { MapTransformProps } from "../interfaces";
 import { SpreadCircle } from "./spread_layer";
 import { Circle } from "../circle";
@@ -39,19 +39,18 @@ export class HoveredPlantLayer extends
   }
 
   render() {
-    const {
-      currentPlant, mapTransformProps, dragging, isEditing, visible, designer
-    } = this.props;
-    const { icon } = designer.hoveredPlant;
-    const hovered = !!icon;
+    const { icon } = this.props.designer.hoveredPlant;
+    const { currentPlant, mapTransformProps, dragging, isEditing } = this.props;
+    const { quadrant, gridSize } = mapTransformProps;
     const { id, x, y, radius } = this.plantInfo;
-    const { qx, qy } = transformXY(round(x), round(y), mapTransformProps);
+    const { qx, qy } = getXYFromQuadrant(round(x), round(y), quadrant, gridSize);
+    const hovered = !!this.props.designer.hoveredPlant.icon;
     const scaledRadius = currentPlant ? radius : radius * 1.2;
     const alpha = dragging ? 0.4 : 1.0;
     const animate = !Session.deprecatedGetBool(BooleanSetting.disable_animations);
 
     return <g id="hovered-plant-layer">
-      {visible && hovered &&
+      {this.props.visible && hovered &&
         <g id={"hovered-plant-" + id}>
           {currentPlant &&
             <g id="selected-plant-indicators">

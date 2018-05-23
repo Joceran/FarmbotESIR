@@ -49,7 +49,9 @@ describe("<RegimenListItem/>", () => {
     wrapper.find("button").simulate("click");
     expect(props.dispatch).toHaveBeenCalledWith({
       type: Actions.SELECT_REGIMEN,
-      payload: props.regimen.uuid
+      payload: expect.objectContaining({
+        uuid: props.regimen.uuid
+      })
     });
   });
 });

@@ -2,6 +2,19 @@ jest.mock("react-redux", () => ({
   connect: jest.fn()
 }));
 
+const mockStorj: Dictionary<boolean> = {};
+
+jest.mock("../../session", () => {
+  return {
+    Session: {
+      deprecatedGetBool: (k: string) => {
+        mockStorj[k] = !!mockStorj[k];
+        return mockStorj[k];
+      }
+    }
+  };
+});
+
 import * as React from "react";
 import { mount } from "enzyme";
 import { Controls } from "../controls";
@@ -10,11 +23,10 @@ import {
   fakePeripheral, fakeWebcamFeed, fakeSensor
 } from "../../__test_support__/fake_state/resources";
 import { Dictionary } from "farmbot";
+import { BooleanSetting } from "../../session_keys";
 import { Props } from "../interfaces";
 
 describe("<Controls />", () => {
-  const mockConfig: Dictionary<boolean> = {};
-
   function fakeProps(): Props {
     return {
       dispatch: jest.fn(),
@@ -26,12 +38,11 @@ describe("<Controls />", () => {
       botToMqttStatus: "up",
       firmwareSettings: bot.hardware.mcu_params,
       shouldDisplay: () => true,
-      getWebAppConfigVal: jest.fn((key) => (mockConfig[key])),
     };
   }
 
   it("shows webcam widget", () => {
-    mockConfig.hide_webcam_widget = false;
+    mockStorj[BooleanSetting.hide_webcam_widget] = false;
     const wrapper = mount(<Controls {...fakeProps()} />);
     const txt = wrapper.text().toLowerCase();
     ["webcam", "move", "peripherals", "sensors"]
@@ -39,7 +50,7 @@ describe("<Controls />", () => {
   });
 
   it("hides webcam widget", () => {
-    mockConfig.hide_webcam_widget = true;
+    mockStorj[BooleanSetting.hide_webcam_widget] = true;
     const wrapper = mount(<Controls {...fakeProps()} />);
     const txt = wrapper.text().toLowerCase();
     ["move", "peripherals", "sensors"]

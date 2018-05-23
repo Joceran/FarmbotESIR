@@ -25,10 +25,8 @@ export function RegimenNameInput({ regimen, dispatch }: RegimenProps) {
         onChange={write({ dispatch, regimen })}
         value={value} />
     </Col>
-    <Col xs={1} className="color-picker-col">
-      <ColorPicker
-        current={(regimen && regimen.body.color) || "gray"}
-        onChange={(color) => dispatch(editRegimen(regimen, { color }))} />
-    </Col>
+    <ColorPicker
+      current={(regimen && regimen.body.color) || "gray"}
+      onChange={(color) => dispatch(editRegimen(regimen, { color }))} />
   </Row>;
 }

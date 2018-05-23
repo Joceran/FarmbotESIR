@@ -18,23 +18,21 @@ module Tools
       tool.destroy!
     end
 
-private
-
-    def slot
-      @slot ||= tool.tool_slot
-    end
-
     def any_slots?
-      add_error :tool, :in_slot, STILL_IN_SLOT if slot.present?
+      add_error :tool, :in_slot, STILL_IN_SLOT if ToolSlot.where(tool: tool).any?
     end
 
     def any_deps?
-      add_error :tool, :in_use, STILL_IN_USE % [names] if names.present?
-    end
+      seq_ids = EdgeNode
+        .where(kind: "tool_id", value: tool.id)
+        .pluck(:sequence_id)
+      names = Sequence
+        .where(id: seq_ids)
+        .pluck(:name)
+        .map{|x| x || "Untitled sequence"}
+        .join(", ")
 
-    def names
-      @names ||= \
-        InUseTool.where(tool_id: tool.id).pluck(:sequence_name).join(", ")
+      add_error :tool, :in_use, STILL_IN_USE % [names] if names.present?
     end
   end
 end

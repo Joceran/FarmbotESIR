@@ -35,7 +35,7 @@ export function didLogin(authState: AuthState, dispatch: Function) {
 }
 
 // We need to handle OK logins for numerous use cases (Ex: login & registration)
-export function onLogin(dispatch: Function) {
+function onLogin(dispatch: Function) {
   return (response: AxiosResponse<AuthState>) => {
     const { data } = response;
     Session.replaceToken(data);

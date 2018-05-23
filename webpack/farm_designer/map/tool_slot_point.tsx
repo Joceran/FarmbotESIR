@@ -1,6 +1,6 @@
 import * as React from "react";
 import { SlotWithTool } from "../../resources/interfaces";
-import { transformXY } from "./util";
+import { getXYFromQuadrant } from "./util";
 import { MapTransformProps } from "./interfaces";
 import * as _ from "lodash";
 import { ToolbaySlot, ToolNames, Tool } from "./tool_graphics";
@@ -35,9 +35,8 @@ export class ToolSlotPoint extends
 
   render() {
     const { id, x, y, pullout_direction } = this.slot.toolSlot.body;
-    const { mapTransformProps } = this.props;
-    const { quadrant, xySwap } = mapTransformProps;
-    const { qx, qy } = transformXY(x, y, this.props.mapTransformProps);
+    const { quadrant, gridSize } = this.props.mapTransformProps;
+    const { qx, qy } = getXYFromQuadrant(x, y, quadrant, gridSize);
     const toolName = this.slot.tool ? this.slot.tool.body.name : "no tool";
     const toolProps = {
       x: qx,
@@ -52,8 +51,7 @@ export class ToolSlotPoint extends
           x={qx}
           y={qy}
           pulloutDirection={pullout_direction}
-          quadrant={quadrant}
-          xySwap={xySwap} />}
+          quadrant={quadrant} />}
 
       {(this.slot.tool || !pullout_direction) &&
         <Tool
@@ -66,8 +64,7 @@ export class ToolSlotPoint extends
         x={qx}
         y={qy}
         pulloutDirection={pullout_direction}
-        quadrant={quadrant}
-        xySwap={xySwap} />
+        quadrant={quadrant} />
     </g>;
   }
 }

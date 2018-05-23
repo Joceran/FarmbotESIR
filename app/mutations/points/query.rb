@@ -2,10 +2,19 @@ require_relative "../../lib/hstore_filter"
 # WHY??? ^
 module Points
     class Query < Mutations::Command
-      H_QUERY = "meta -> :key = :value"
-
+      H_QUERY = "meta @> hstore(:key, :value)"
+      WHITELIST = [
+        :radius,
+        :x,
+        :y,
+        :z,
+        :pointer_id,
+        :name,
+        :pointer_type,
+        :device
+      ]
       required do
-        duck :points, method: [:where]
+        model :device, class: Device
       end
 
       optional do
@@ -14,31 +23,28 @@ module Points
         float    :y
         float    :z
         hstore   :meta
+        integer  :pointer_id
         string   :name
+        string   :pointer_type
       end
 
       def execute
-        search_results
+          points
       end
 
-      def search_results
-        @search_results ||= conditions.reduce(points) do |collection, query|
-          collection.where(query)
-        end
+      def points
+        return @points if @points
+        @points = Point.includes(:pointer).where(inputs.slice(*WHITELIST))
+        add_meta_fields if meta
+        @points
       end
 
-      def conditions
-        @conditions ||= regular_conditions + meta_conditions
-      end
-
-      def meta_conditions
-        @meta_conditions ||= (meta || {}).map do |(k,v)|
-          [H_QUERY, {key: k, value: v}]
-        end
-      end
-
-      def regular_conditions
-        @regular_conditions ||= [inputs.except(:points, :meta)]
+      def add_meta_fields
+        meta
+          .to_a
+          .each do |x|
+            @points = @points.where(H_QUERY, key: x[0] , value: x[1])
+          end
       end
     end
 end

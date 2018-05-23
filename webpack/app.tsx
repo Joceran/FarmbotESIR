@@ -5,13 +5,12 @@ import * as _ from "lodash";
 import { init, error } from "farmbot-toastr";
 
 import { NavBar } from "./nav";
-import { Everything } from "./interfaces";
+import { Everything, Log } from "./interfaces";
 import { LoadingPlant } from "./loading_plant";
 import { BotState, Xyz } from "./devices/interfaces";
+import { ResourceName, TaggedUser } from "./resources/tagged_resources";
 import {
-  ResourceName, TaggedUser, TaggedLog
-} from "./resources/tagged_resources";
-import {
+  selectAllLogs,
   maybeFetchUser,
   maybeGetTimeOffset,
   getFirmwareConfig
@@ -24,8 +23,6 @@ import { Session } from "./session";
 import { BooleanSetting } from "./session_keys";
 import { getPathArray } from "./history";
 import { FirmwareConfig } from "./config_storage/firmware_configs";
-import { getWebAppConfigValue } from "./config_storage/actions";
-import { takeSortedLogs } from "./logs/state_to_props";
 
 /** Remove 300ms delay on touch devices - https://github.com/ftlabs/fastclick */
 const fastClick = require("fastclick");
@@ -37,13 +34,12 @@ init();
 export interface AppProps {
   dispatch: Function;
   loaded: ResourceName[];
-  logs: TaggedLog[];
+  logs: Log[];
   user: TaggedUser | undefined;
   bot: BotState;
   consistent: boolean;
   timeOffset: number;
   axisInversion: Record<Xyz, boolean>;
-  xySwap: boolean;
   firmwareConfig: FirmwareConfig | undefined;
 }
 
@@ -53,7 +49,12 @@ function mapStateToProps(props: Everything): AppProps {
     dispatch: props.dispatch,
     user: maybeFetchUser(props.resources.index),
     bot: props.bot,
-    logs: takeSortedLogs(250, props.resources.index),
+    logs: _(selectAllLogs(props.resources.index))
+      .map(x => x.body)
+      .sortBy("created_at")
+      .reverse()
+      .take(250)
+      .value(),
     loaded: props.resources.loaded,
     consistent: !!(props.bot || {}).consistent,
     axisInversion: {
@@ -61,7 +62,6 @@ function mapStateToProps(props: Everything): AppProps {
       y: !!Session.deprecatedGetBool(BooleanSetting.y_axis_inverted),
       z: !!Session.deprecatedGetBool(BooleanSetting.z_axis_inverted),
     },
-    xySwap: !!getWebAppConfigValue(() => props)(BooleanSetting.xy_swap),
     firmwareConfig: validFwConfig(getFirmwareConfig(props.resources.index))
   };
 }
@@ -118,10 +118,7 @@ export class App extends React.Component<AppProps, {}> {
           dispatch={this.props.dispatch}
           axisInversion={this.props.axisInversion}
           botPosition={validBotLocationData(location_data).position}
-          firmwareSettings={this.props.firmwareConfig || mcu_params}
-          xySwap={this.props.xySwap}
-          arduinoBusy={!!this.props.bot.hardware.informational_settings.busy}
-          stepSize={this.props.bot.stepSize} />}
+          mcuParams={this.props.firmwareConfig || mcu_params} />}
     </div>;
   }
 }

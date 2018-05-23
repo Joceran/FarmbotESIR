@@ -1,6 +1,5 @@
 # A Corpus is a dictionary describing every kind of node and argument that is
-# allowed in the abstract syntax tree. Very similar to the a "grammar" in
-# parser generators (but not exactly).
+# allowed in the abstract syntax tree.
 module CeleryScript
   class Corpus
     BAD_NODE_NAME = "Can't find validation rules for node "

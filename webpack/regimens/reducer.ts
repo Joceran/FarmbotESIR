@@ -2,7 +2,7 @@ import * as _ from "lodash";
 import { Dictionary } from "farmbot";
 import { Week, DAYS } from "./bulk_scheduler/interfaces";
 import { generateReducer } from "../redux/generate_reducer";
-import { TaggedResource } from "../resources/tagged_resources";
+import { TaggedResource, TaggedRegimen } from "../resources/tagged_resources";
 import { Actions } from "../constants";
 
 export interface RegimenState {
@@ -76,8 +76,8 @@ export let regimensReducer = generateReducer<RegimenState>(initialState)
     days[day] = !days[day];
     return s;
   })
-  .add<string>(Actions.SELECT_REGIMEN, (s, { payload }) => {
-    s.currentRegimen = payload;
+  .add<TaggedRegimen>(Actions.SELECT_REGIMEN, (s, { payload }) => {
+    s.currentRegimen = payload.uuid;
     return s;
   })
   .add<string>(Actions.SET_SEQUENCE, (s, { payload }) => {

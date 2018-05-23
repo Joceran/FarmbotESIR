@@ -1,7 +1,6 @@
 import * as React from "react";
 import { TargetCoordinate, TargetCoordinateProps } from "../target_coordinate";
 import { shallow } from "enzyme";
-import { fakeMapTransformProps } from "../../../__test_support__/map_transform_props";
 
 describe("<TargetCoordinate/>", () => {
   function fakeProps(): TargetCoordinateProps {
@@ -11,12 +10,14 @@ describe("<TargetCoordinate/>", () => {
         y: 200,
         z: 0
       },
-      mapTransformProps: fakeMapTransformProps(),
+      mapTransformProps: {
+        quadrant: 2, gridSize: { x: 3000, y: 1500 }
+      }
     };
   }
 
   it("renders target", () => {
-    const wrapper = shallow(<TargetCoordinate {...fakeProps()} />);
+    const wrapper = shallow(<TargetCoordinate {...fakeProps() } />);
     const boxProps = wrapper.find("rect").props();
     expect(boxProps.x).toEqual(90);
     expect(boxProps.y).toEqual(198);

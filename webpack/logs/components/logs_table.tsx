@@ -1,36 +1,33 @@
 import * as React from "react";
 import { t } from "i18next";
 import { TaggedLog } from "../../resources/tagged_resources";
-import { LogsState, LogsTableProps, Filters } from "../interfaces";
+import { LogsState, LogsTableProps } from "../interfaces";
 import { formatLogTime } from "../index";
-import { Classes } from "@blueprintjs/core";
-import { isNumber, startCase } from "lodash";
-
+import * as _ from "lodash";
 interface LogsRowProps {
   tlog: TaggedLog;
+  state: LogsState;
   timeOffset: number;
 }
-
-/** A log is displayed in a single row of the logs table. */
 const LogsRow = ({ tlog, timeOffset }: LogsRowProps) => {
-  const { uuid } = tlog;
-  const { x, y, z, verbosity, type, created_at, message } = tlog.body;
-  const time = formatLogTime(created_at, timeOffset);
-  return <tr key={uuid}>
+  const log = tlog.body;
+  const { x, y, z, verbosity, type } = log;
+  const time = formatLogTime(log.created_at, timeOffset);
+  return <tr key={tlog.uuid}>
     <td>
       <div className={`saucer ${type}`}>
         <p>
           {verbosity}
         </p>
       </div>
-      {startCase(type)}
+      {_.startCase(type)}
     </td>
     <td>
-      {message || "Loading"}
+      {log.message || "Loading"}
     </td>
     <td>
       {
-        (isNumber(x) && isNumber(y) && isNumber(z))
+        (_.isNumber(x) && _.isNumber(y) && _.isNumber(z))
           ? `${x}, ${y}, ${z}`
           : "Unknown"
       }
@@ -41,15 +38,8 @@ const LogsRow = ({ tlog, timeOffset }: LogsRowProps) => {
   </tr>;
 };
 
-const LOG_TABLE_CLASS = [
-  Classes.HTML_TABLE,
-  Classes.HTML_TABLE_STRIPED,
-  "logs-table"
-].join(" ");
-
-/** All log messages with select data in table form for display in the app. */
 export const LogsTable = (props: LogsTableProps) => {
-  return <table className={LOG_TABLE_CLASS}>
+  return <table className="pt-table pt-striped logs-table">
     <thead>
       <tr>
         <th><label>{t("Type")}</label></th>
@@ -59,35 +49,29 @@ export const LogsTable = (props: LogsTableProps) => {
       </tr>
     </thead>
     <tbody>
-      {filterByVerbosity(getFilterLevel(props.state), props.logs)
+      {filterByVerbosity(props.state, props.logs)
         .map((log: TaggedLog) => {
           return <LogsRow
             key={log.uuid}
             tlog={log}
+            state={props.state}
             timeOffset={props.timeOffset} />;
         })}
     </tbody>
   </table>;
 };
 
-/** Get current verbosity filter level for a message type from LogsState. */
-const getFilterLevel = (state: LogsState) =>
-  (type: keyof Filters): number => {
-    const filterLevel = state[type as keyof Filters];
-    return isNumber(filterLevel) ? filterLevel : 1;
-  };
-
-/** Filter TaggedLogs by verbosity level using a fetch filter level function. */
-export const filterByVerbosity =
-  (getLevelFor: (type: keyof Filters) => number, logs: TaggedLog[]) => {
-    return logs
-      .filter((log: TaggedLog) => {
-        const { type, verbosity } = log.body;
-        const filterLevel = getLevelFor(type);
-        // If verbosity is 0 (or == False), display if log type is enabled
-        const displayLog = verbosity
-          ? verbosity <= filterLevel
-          : filterLevel != 0;
-        return displayLog;
-      });
-  };
+const filterByVerbosity = (state: LogsState, logs: TaggedLog[]) => {
+  return logs
+    .filter((log: TaggedLog) => {
+      return !log.body.message.toLowerCase().includes("filtered");
+    })
+    .filter((log: TaggedLog) => {
+      const { type, verbosity } = log.body;
+      const filterLevel = state[type as keyof LogsState];
+      const displayLog = verbosity
+        ? verbosity <= filterLevel
+        : filterLevel != 0;
+      return displayLog;
+    });
+};

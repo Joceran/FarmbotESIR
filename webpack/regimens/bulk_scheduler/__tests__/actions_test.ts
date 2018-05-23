@@ -46,7 +46,8 @@ describe("commitBulkEditor()", () => {
           "body": [{ kind: "wait", args: { milliseconds: 100 } }],
           "args": {
             "locals": { kind: "scope_declaration", args: {} },
-            "version": 4
+            "version": 4,
+            "label": "WIP"
           },
           "kind": "sequence"
         },
@@ -75,16 +76,12 @@ describe("commitBulkEditor()", () => {
     return state;
   }
 
-  function returnsError(state: Everything, message: string, title?: string) {
+  function returnsError(state: Everything, message: string) {
     const getState = () => state;
     const dispatch = jest.fn();
     commitBulkEditor()(dispatch, getState);
     expect(dispatch).not.toHaveBeenCalled();
-    if (title) {
-      expect(mockErr).toBeCalledWith(message, title);
-    } else {
-      expect(mockErr).toBeCalledWith(message);
-    }
+    expect(mockErr).toBeCalledWith(message);
   }
 
   it("does nothing if no regimen is selected", () => {
@@ -96,9 +93,7 @@ describe("commitBulkEditor()", () => {
   it("does nothing if no sequence is selected", () => {
     const state = newFakeState();
     state.resources.consumers.regimens.selectedSequenceUUID = undefined;
-    returnsError(state,
-      "Select a sequence from the dropdown first.",
-      "Error");
+    returnsError(state, "Select a sequence from the dropdown first.");
   });
 
   it("does nothing if no days are selected", () => {

@@ -1,35 +1,41 @@
-# A singleton that runs on a seperate process than the web server.
-# Listens to *ALL* incoming logs and stores them to the DB.
-# Also handles throttling.
 class LogService
-  THROTTLE_POLICY  = ThrottlePolicy.new Throttler.new(1.minute) => 0.5 * 1_000,
-                                        Throttler.new(1.hour)   => 0.5 * 10_000,
-                                        Throttler.new(1.day)    => 0.5 * 100_000
+  def self.save?(log_as_ruby_hash)
+    t = (log_as_ruby_hash || {}).dig("meta", "type")
+    !!(t && !Log::DISCARD.include?(t))
+  end
+
+  # Prevent logs table from growing out of proportion. For now, it is
+  # randomly to every third request for performance.
+  def self.maybe_clear_logs(device)
+    logs    = Log.where(device_id: device.id)
+    limit   = device.max_log_count || Device::DEFAULT_MAX_LOGS
+    current = logs.count
+    logs
+      .order(created_at: :desc)
+      .last(current - limit)
+      .map(&:destroy) if current > limit
+  end
 
   def self.process(delivery_info, payload)
-    params = { routing_key: delivery_info.routing_key, payload: payload }
-    data   = AmqpLogParser.run!(params)
-    puts data.payload["message"] if Rails.env.production?
-    THROTTLE_POLICY.track(data.device_id)
-    maybe_deliver(data)
-  end
-
-  def self.maybe_deliver(data)
-    throttled_until = THROTTLE_POLICY.is_throttled(data.device_id)
-    ok              = data.valid? && !throttled_until
-
-    data.device.auto_sync_transaction do
-      ok ? deliver(data) : warn_user(data, throttled_until)
+    # { "meta"=>{"z"=>0, "y"=>0, "x"=>0, "type"=>"info", "major_version"=>6},
+    #   "message"=>"HQ FarmBot TEST 123 Pin 13 is 0",
+    #   "created_at"=>1512585641,
+    #   "channels"=>[] }
+    log           = JSON.parse(payload)
+    primary       = log["major_version"]
+    secondary     = log.dig("meta", "major_version") # Legacy
+    # Legacy bots will double save logs if we don't do this:
+    major_version =  (primary || secondary || 0).to_i
+    puts log["message"] if Rails.env.production?
+    if(major_version >= 6)
+      device_id = delivery_info.routing_key.split(".")[1].gsub("device_", "").to_i
+      if save?(log)
+        device = Device.find(device_id)
+        db_log = Logs::Create.run!(log, device: device)
+        db_log.save!
+        maybe_clear_logs(device)
+        LogDispatch.deliver(device, db_log)
+      end
     end
-  end
-
-  def self.deliver(data)
-    dev, log = [data.device, data.payload]
-    dev.maybe_unthrottle
-    LogDispatch.deliver(dev, Logs::Create.run!(log, device: dev))
-  end
-
-  def self.warn_user(data, throttled_until)
-    data.device.maybe_throttle_until(throttled_until)
   end
 end

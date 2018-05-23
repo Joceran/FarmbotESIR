@@ -21,7 +21,7 @@ import { BooleanSetting } from "../../../session_keys";
 
 describe("maybeToggleFeature()", () => {
   it("returns `undefined` without consent", () => {
-    window.confirm = jest.fn(() => false);
+    Object.defineProperty(global, "confirm", () => false);
     const data: LabsFeature = {
       name: "Example",
       value: false,
@@ -32,11 +32,11 @@ describe("maybeToggleFeature()", () => {
     const out = maybeToggleFeature(data);
     expect(data.value).toBeFalsy();
     expect(out).toBeUndefined();
-    expect(window.confirm).toHaveBeenCalledWith(data.confirmationMessage);
   });
 
   it("updates a `LabsFeature` with consent", () => {
-    window.confirm = () => true;
+    // tslint:disable-next-line:no-any
+    (global as any).confirm = () => true;
     const data: LabsFeature = {
       name: "Example1",
       value: (mockStorj[BooleanSetting.stub_config] = false),
@@ -51,7 +51,8 @@ describe("maybeToggleFeature()", () => {
   });
 
   it("Does not require consent when going from true to false", () => {
-    window.confirm = jest.fn(() => true);
+    const conf = jest.fn(() => true);
+    Object.defineProperty(global, "confirm", conf);
     const output = maybeToggleFeature({
       name: "Example",
       value: (mockStorj[BooleanSetting.stub_config] = true),
@@ -59,7 +60,7 @@ describe("maybeToggleFeature()", () => {
       storageKey: BooleanSetting.stub_config,
       confirmationMessage: "are you sure?"
     });
-    expect(window.confirm).not.toHaveBeenCalled();
+    expect(conf).not.toHaveBeenCalled();
     output ?
       expect(output.value).toBeFalsy() : fail("`output` should be defined.");
   });

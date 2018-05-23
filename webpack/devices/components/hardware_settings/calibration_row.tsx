@@ -7,11 +7,9 @@ import { axisTrackingStatus } from "../axis_tracking_status";
 import { ToolTips } from "../../../constants";
 import { Row, Col } from "../../../ui/index";
 import { CalibrationRowProps } from "../interfaces";
-import { commandErr } from "../../actions";
 
-const calibrate = (axis: Axis) => getDevice()
-  .calibrate({ axis })
-  .catch(commandErr("Calibration"));
+const calibrate =
+  (axis: Axis) => getDevice().calibrate({ axis }).catch(() => { });
 
 export function CalibrationRow(props: CalibrationRowProps) {
 

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { GardenPlantProps, GardenPlantState } from "./interfaces";
 import { cachedCrop, DEFAULT_ICON, svgToUrl } from "../../open_farm/icons";
-import { round, transformXY } from "./util";
+import { round, getXYFromQuadrant } from "./util";
 import { DragHelpers } from "./drag_helpers";
 import { Session } from "../../session";
 import { BooleanSetting } from "../../session_keys";
@@ -52,10 +52,11 @@ export class GardenPlant extends
   render() {
     const { selected, dragging, plant, grayscale, mapTransformProps,
       activeDragXY, zoomLvl } = this.props;
+    const { quadrant, gridSize } = mapTransformProps;
     const { id, radius, x, y } = plant.body;
     const { icon } = this.state;
 
-    const { qx, qy } = transformXY(round(x), round(y), mapTransformProps);
+    const { qx, qy } = getXYFromQuadrant(round(x), round(y), quadrant, gridSize);
     const alpha = dragging ? 0.4 : 1.0;
     const animate = !Session.deprecatedGetBool(BooleanSetting.disable_animations);
 

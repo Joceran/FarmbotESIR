@@ -6,8 +6,7 @@ import {
   LegalArgString,
   SyncStatus,
   ALLOWED_CHANNEL_NAMES,
-  Xyz,
-  FarmwareConfig
+  Xyz
 } from "farmbot";
 import { StepMoveDataXfer, StepSpliceDataXfer } from "../draggable/interfaces";
 import { TaggedSequence } from "../resources/tagged_resources";
@@ -128,6 +127,20 @@ export interface StepTitleBarProps {
   sequence: TaggedSequence;
 }
 
+export type CHANGE_STEP = "CHANGE_STEP";
+
+export type CHANGE_STEP_SELECT = "CHANGE_STEP_SELECT" | "UPDATE_SUB_SEQUENCE";
+
+export interface ChangeStepSelect {
+  type: CHANGE_STEP_SELECT;
+  payload: {
+    value: number | string;
+    index: number;
+    field: string;
+    type?: string;
+  };
+}
+
 export interface SelectSequence {
   type: "SELECT_SEQUENCE";
   payload: string;
@@ -137,13 +150,10 @@ export type DataXferObj = StepMoveDataXfer | StepSpliceDataXfer;
 
 export type dispatcher = (a: Function | { type: string }) => DataXferObj;
 
-export type FarmwareConfigs = { [x: string]: FarmwareConfig[] };
-
 export interface FarmwareInfo {
   farmwareNames: string[];
   firstPartyFarmwareNames: string[];
   showFirstPartyFarmware: boolean;
-  farmwareConfigs: FarmwareConfigs;
 }
 
 export interface StepParams {

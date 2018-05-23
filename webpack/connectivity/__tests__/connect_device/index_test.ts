@@ -39,9 +39,9 @@ import {
   onSent,
   onOnline,
   onMalformed,
+  onLogs,
   speakLogAloud
 } from "../../connect_device";
-import { onLogs } from "../../log_handlers";
 import { Actions, Content } from "../../../constants";
 import { Log } from "../../../interfaces";
 import { ALLOWED_CHANNEL_NAMES, ALLOWED_MESSAGE_TYPES, Farmbot } from "farmbot";
@@ -50,7 +50,6 @@ import { dispatchNetworkUp, dispatchNetworkDown } from "../../index";
 import { getDevice } from "../../../device";
 import { fakeState } from "../../../__test_support__/fake_state";
 import { talk } from "browser-speech";
-import { globalQueue } from "../../batch_queue";
 
 describe("readStatus()", () => {
   it("forces a read_status request to FarmBot", () => {
@@ -166,7 +165,7 @@ describe("onOffline", () => {
     jest.resetAllMocks();
     onOffline();
     expect(dispatchNetworkDown).toHaveBeenCalledWith("user.mqtt");
-    expect(error).toHaveBeenCalledWith(Content.MQTT_DISCONNECTED, "Error");
+    expect(error).toHaveBeenCalledWith(Content.MQTT_DISCONNECTED);
   });
 });
 
@@ -222,7 +221,6 @@ describe("onLogs", () => {
     const log = fakeLog("error", []);
     log.message = "bot xyz is offline";
     fn(log);
-    globalQueue.work();
     expect(dispatchNetworkDown).toHaveBeenCalledWith("bot.mqtt");
   });
 });

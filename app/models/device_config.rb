@@ -1,4 +1,3 @@
-# User definable key/value pairs, usually used for Farmware authorship.
 class DeviceConfig < ApplicationRecord
   belongs_to :device
   serialize  :value

@@ -9,13 +9,11 @@ import { FBSelect, DropDownItem } from "../../ui";
 import { PlantOptions } from "../interfaces";
 import { PlantStage } from "farmbot";
 import * as moment from "moment";
-import { Actions } from "../../constants";
 
 export interface PlantPanelProps {
   info: FormattedPlantInfo;
   onDestroy?(uuid: string): void;
   updatePlant?(uuid: string, update: PlantOptions): void;
-  dispatch: Function;
 }
 
 export const PLANT_STAGES: DropDownItem[] = [
@@ -39,33 +37,7 @@ export const PLANT_STAGES_DDI = {
   },
 };
 
-export interface EditPlantStatusProps {
-  plantStatus: PlantStage,
-  updatePlant(uuid: string, update: PlantOptions): void;
-  uuid: string;
-}
-
-export function EditPlantStatus(props: EditPlantStatusProps) {
-  const { plantStatus, updatePlant, uuid } = props;
-  return <FBSelect
-    list={PLANT_STAGES}
-    selectedItem={PLANT_STAGES_DDI[plantStatus]}
-    onChange={e => {
-      const plant_stage = e.value as PlantStage;
-      const update: PlantOptions = { plant_stage };
-      switch (plant_stage) {
-        case "planned":
-          update.planted_at = undefined;
-          break;
-        case "planted":
-          update.planted_at = moment().toISOString();
-      }
-      updatePlant(uuid, update);
-    }} />;
-}
-
-export function PlantPanel(props: PlantPanelProps) {
-  const { info, onDestroy, updatePlant, dispatch } = props;
+export function PlantPanel({ info, onDestroy, updatePlant }: PlantPanelProps) {
   const { name, slug, plantedAt, daysOld, uuid, plantStatus } = info;
   let { x, y } = info;
   if (onDestroy) { x = round(x); y = round(y); }
@@ -124,25 +96,25 @@ export function PlantPanel(props: PlantPanelProps) {
         </b>
         <span>
           {updatePlant
-            ? <EditPlantStatus
-              uuid={uuid}
-              plantStatus={plantStatus}
-              updatePlant={updatePlant} />
+            ? <FBSelect
+              list={PLANT_STAGES}
+              selectedItem={PLANT_STAGES_DDI[plantStatus]}
+              onChange={e => {
+                const plant_stage = e.value as PlantStage;
+                const update: PlantOptions = { plant_stage };
+                switch (plant_stage) {
+                  case "planned":
+                    update.planted_at = undefined;
+                    break;
+                  case "planted":
+                    update.planted_at = moment().toISOString();
+                }
+                updatePlant(uuid, update);
+              }} />
             : plantStatus}
         </span>
       </li>
     </ul>
-    <button className="fb-button gray"
-      hidden={true}
-      onClick={() => {
-        dispatch({
-          type: Actions.CHOOSE_LOCATION,
-          payload: { x, y, z: undefined }
-        });
-        history.push("/app/designer/plants/move_to");
-      }}>
-      {t("Move FarmBot to this plant")}
-    </button>
     <div>
       <label hidden={!onDestroy}>
         {t("Delete this plant")}
@@ -151,7 +123,7 @@ export function PlantPanel(props: PlantPanelProps) {
     <button
       className="fb-button red"
       hidden={!onDestroy}
-      onClick={destroy}>
+      onClick={destroy} >
       {t("Delete")}
     </button>
     <button

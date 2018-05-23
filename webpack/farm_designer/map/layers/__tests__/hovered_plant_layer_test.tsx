@@ -2,7 +2,6 @@ import * as React from "react";
 import { HoveredPlantLayer, HoveredPlantLayerProps } from "../hovered_plant_layer";
 import { shallow } from "enzyme";
 import { fakePlant } from "../../../../__test_support__/fake_state/resources";
-import { fakeMapTransformProps } from "../../../../__test_support__/map_transform_props";
 
 describe("<HoveredPlantLayer/>", () => {
   function fakeProps(): HoveredPlantLayerProps {
@@ -24,14 +23,16 @@ describe("<HoveredPlantLayer/>", () => {
       },
       hoveredPlant: fakePlant(),
       isEditing: false,
-      mapTransformProps: fakeMapTransformProps(),
+      mapTransformProps: {
+        quadrant: 2, gridSize: { x: 3000, y: 1500 }
+      }
     };
   }
 
   it("shows hovered plant icon", () => {
     const p = fakeProps();
     p.designer.hoveredPlant.icon = "fake icon";
-    const wrapper = shallow(<HoveredPlantLayer {...p} />);
+    const wrapper = shallow(<HoveredPlantLayer {...p } />);
     const icon = wrapper.find("image").props();
     expect(icon.visibility).toBeTruthy();
     expect(icon.opacity).toEqual(1);
@@ -43,7 +44,7 @@ describe("<HoveredPlantLayer/>", () => {
     const p = fakeProps();
     p.designer.hoveredPlant.icon = "fake icon";
     p.currentPlant = fakePlant();
-    const wrapper = shallow(<HoveredPlantLayer {...p} />);
+    const wrapper = shallow(<HoveredPlantLayer {...p } />);
     expect(wrapper.find("#selected-plant-indicators").length).toEqual(1);
     expect(wrapper.find("Circle").length).toEqual(1);
     expect(wrapper.find("Circle").props().selected).toBeTruthy();
@@ -54,7 +55,7 @@ describe("<HoveredPlantLayer/>", () => {
 
   it("doesn't show hovered plant icon", () => {
     const p = fakeProps();
-    const wrapper = shallow(<HoveredPlantLayer {...p} />);
+    const wrapper = shallow(<HoveredPlantLayer {...p } />);
     expect(wrapper.html()).toEqual("<g id=\"hovered-plant-layer\"></g>");
   });
 });

@@ -7,8 +7,7 @@ import {
   TaggedWebAppConfig,
   TaggedSensor,
   TaggedFirmwareConfig,
-  TaggedPinBinding,
-  TaggedLog
+  TaggedPinBinding
 } from "../../resources/tagged_resources";
 import { ExecutableType } from "../../farm_designer/interfaces";
 import { fakeResource } from "../fake_resource";
@@ -52,22 +51,6 @@ export function fakeFarmEvent(exe_type: ExecutableType,
     "executable_id": exe_id,
     "executable_type": exe_type,
     "calendar": []
-  });
-}
-
-export function fakeLog(): TaggedLog {
-  return fakeResource("Log", {
-    id: idCounter++,
-    message: "Farmbot is up and Running!",
-    type: "info",
-    x: 1,
-    y: 2,
-    z: 3,
-    verbosity: 1,
-    major_version: 5,
-    minor_version: 1,
-    channels: ["toast"],
-    created_at: 1501703421
   });
 }
 
@@ -227,9 +210,7 @@ export function fakeWebAppConfig(): TaggedWebAppConfig {
     enable_browser_speak: false,
     photo_filter_begin: "2018-01-11T20:20:38.362Z",
     photo_filter_end: "2018-01-22T15:32:41.970Z",
-    discard_unsaved: false,
-    xy_swap: false,
-    home_button_homing: false,
+    discard_unsaved: false
   });
 }
 

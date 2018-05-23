@@ -27,8 +27,7 @@ describe("<Sequences/>", () => {
       farmwareInfo: {
         farmwareNames: [],
         firstPartyFarmwareNames: [],
-        showFirstPartyFarmware: false,
-        farmwareConfigs: {},
+        showFirstPartyFarmware: false
       },
       shouldDisplay: jest.fn(),
     };

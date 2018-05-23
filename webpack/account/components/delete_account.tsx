@@ -15,10 +15,6 @@ export class DeleteAccount extends
   React.Component<DeleteAccountProps, DeleteAccountState> {
   state: DeleteAccountState = { password: "" };
 
-  componentWillUnmount() {
-    this.setState({ password: "" });
-  }
-
   render() {
     return <Widget>
       <WidgetHeader title="Delete Account" />

@@ -32,7 +32,7 @@ export function RegimenListItem({ regimen, dispatch }: RegimenListItemProps) {
 function select(dispatch: Function, regimen: TaggedRegimen) {
   return function () {
     if (regimen && isTaggedRegimen(regimen)) {
-      dispatch(selectRegimen(regimen.uuid));
+      dispatch(selectRegimen(regimen));
     }
   };
 }

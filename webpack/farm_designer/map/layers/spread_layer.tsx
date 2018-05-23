@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Component } from "react";
 import { TaggedPlantPointer } from "../../../resources/tagged_resources";
-import { round, transformXY } from "../util";
+import { round, getXYFromQuadrant } from "../util";
 import { cachedCrop } from "../../../open_farm/icons";
 import { MapTransformProps } from "../interfaces";
 import { SpreadOverlapHelper } from "../spread_overlap_helper";
@@ -36,7 +36,7 @@ export function SpreadLayer(props: SpreadLayerProps) {
       </radialGradient>
     </defs>
 
-    {plants.map(p => {
+    {plants.map((p) => {
       const selected = !!(currentPlant && (p.uuid === currentPlant.uuid));
       return <g id={"spread-components-" + p.body.id} key={p.uuid}>
         {visible &&
@@ -54,7 +54,8 @@ export function SpreadLayer(props: SpreadLayerProps) {
           activeDragXY={activeDragXY}
           activeDragSpread={activeDragSpread} />
       </g>;
-    })}
+    })
+    }
   </g>;
 }
 
@@ -81,7 +82,8 @@ export class SpreadCircle extends
   render() {
     const { radius, x, y, id } = this.props.plant.body;
     const { selected, mapTransformProps } = this.props;
-    const { qx, qy } = transformXY(round(x), round(y), mapTransformProps);
+    const { quadrant, gridSize } = mapTransformProps;
+    const { qx, qy } = getXYFromQuadrant(round(x), round(y), quadrant, gridSize);
     const animate = !Session.deprecatedGetBool(BooleanSetting.disable_animations);
 
     return <g id={"spread-" + id}>

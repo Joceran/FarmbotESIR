@@ -25,4 +25,8 @@ export let sequenceReducer = generateReducer<SequenceReducerState>(initialState)
   .add<string>(Actions.SELECT_SEQUENCE, function (s, { payload }) {
     s.current = payload;
     return s;
+  })
+  .add<void>(Actions.RESOURCE_READY, function (s) {
+    s.current = undefined;
+    return s;
   });

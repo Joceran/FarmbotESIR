@@ -1,20 +1,15 @@
 class Point < ApplicationRecord
-  include Discard::Model
-  MAX_AXIS_SIZE = 50_000 # No one has an axis value > 21k right now - RC
-  # Using real constants instead of strings results in circular dep. errors.
-  POINTER_KINDS           = ["GenericPointer", "Plant", "ToolSlot"]
-  self.inheritance_column = "pointer_type"
-
+  POINTER_KINDS = { "GenericPointer" => GenericPointer,
+                    "ToolSlot"       => ToolSlot,
+                    "Plant"          => Plant }
+  SHARED_FIELDS = [:x, :y, :z, :radius, :name, :meta]
   belongs_to :device
+  belongs_to :pointer, polymorphic: true, dependent: :destroy
+  validates :pointer_type,
+            inclusion: { in: POINTER_KINDS.keys,
+                         message: "%{value} is not a valid pointer type" }
+  validates :pointer, presence: true
+  validates_presence_of :pointer
   validates_presence_of :device
-
-  after_discard :maybe_broadcast
-
-  [:x, :y, :z].map do |axis|
-    validates_numericality_of axis, less_than: MAX_AXIS_SIZE
-  end
-
-  def name_used_when_syncing
-    "Point"
-  end
+  accepts_nested_attributes_for :pointer
 end

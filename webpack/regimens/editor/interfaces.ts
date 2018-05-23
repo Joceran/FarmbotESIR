@@ -6,7 +6,6 @@ import {
 import { AuthState } from "../../auth/interfaces";
 import { BotState } from "../../devices/interfaces";
 import { TaggedRegimen } from "../../resources/tagged_resources";
-import { Actions } from "../../constants";
 
 export interface ActiveEditorProps {
   regimen: TaggedRegimen;
@@ -44,9 +43,4 @@ export interface CopyButtnProps {
 
 export interface DeleteButtonProps extends RegimenProps {
   baseUrl: string;
-}
-
-export interface SelectRegimen {
-  type: Actions.SELECT_REGIMEN;
-  payload: string;
 }

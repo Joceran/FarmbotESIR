@@ -22,16 +22,13 @@ export interface ToolSlotGraphicProps {
   y: number;
   pulloutDirection: ToolPulloutDirection;
   quadrant: BotOriginQuadrant;
-  xySwap: boolean;
 }
 
 const toolbaySlotAngle = (
   pulloutDirection: ToolPulloutDirection,
-  quadrant: BotOriginQuadrant,
-  xySwap: boolean) => {
+  quadrant: BotOriginQuadrant) => {
   const rawAngle = () => {
-    const direction = pulloutDirection + (xySwap ? 2 : 0);
-    switch (direction > 4 ? direction % 4 : direction) {
+    switch (pulloutDirection) {
       case ToolPulloutDirection.POSITIVE_X: return 0;
       case ToolPulloutDirection.NEGATIVE_X: return 180;
       case ToolPulloutDirection.NEGATIVE_Y: return 90;
@@ -59,8 +56,8 @@ export enum ToolNames {
 }
 
 export const ToolbaySlot = (props: ToolSlotGraphicProps) => {
-  const { id, x, y, pulloutDirection, quadrant, xySwap } = props;
-  const angle = toolbaySlotAngle(pulloutDirection, quadrant, xySwap);
+  const { id, x, y, pulloutDirection, quadrant } = props;
+  const angle = toolbaySlotAngle(pulloutDirection, quadrant);
   return <g id={"toolbay-slot"}>
     <defs>
       <g id={"toolbay-slot-" + id}

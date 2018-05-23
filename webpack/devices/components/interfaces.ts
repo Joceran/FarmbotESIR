@@ -1,7 +1,4 @@
-import {
-  BotState, SourceFbosConfig, Xyz, SourceFwConfig,
-  ControlPanelState, ShouldDisplay
-} from "../interfaces";
+import { BotState, SourceFbosConfig, Xyz, SourceFwConfig, ControlPanelState } from "../interfaces";
 import { McuParamName, McuParams } from "farmbot/dist";
 import { IntegerSize } from "../../util";
 import { FirmwareConfig } from "../../config_storage/firmware_configs";
@@ -80,7 +77,6 @@ export interface MotorsProps {
 
 export interface EncodersProps {
   dispatch: Function;
-  shouldDisplay: ShouldDisplay;
   controlPanelState: ControlPanelState;
   sourceFwConfig: SourceFwConfig;
 }

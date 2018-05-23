@@ -13,8 +13,7 @@ jest.mock("axios", () => {
 import { createTransferCert } from "../create_transfer_cert";
 import { getDevice } from "../../../device";
 import axios from "axios";
-import { API } from "../../../api";
-API.setBaseUrl("http://foo.bar");
+
 describe("createTransferCert", () => {
   it("creates a transfer cert", async () => {
     const p = {
@@ -26,7 +25,7 @@ describe("createTransferCert", () => {
     const x = await createTransferCert(p);
     expect(x).toBe("FAKE CERT");
     expect(axios.post).toHaveBeenCalled();
-    const url = "http://foo.bar/api/users/control_certificate";
+    const url = "/api/users/control_certificate";
     const data = { "email": "admin@admin.com", "password": "password123" };
     expect(axios.post).toHaveBeenCalledWith(url, data);
   });

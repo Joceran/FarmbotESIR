@@ -97,7 +97,6 @@ export class HardwareSettings extends
             isValidFwConfig={!!firmwareConfig} />
           <EncodersAndEndStops
             dispatch={dispatch}
-            shouldDisplay={this.props.shouldDisplay}
             controlPanelState={controlPanelState}
             sourceFwConfig={sourceFwConfig} />
           <PinGuard

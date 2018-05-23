@@ -10,7 +10,6 @@ import { DropDownItem } from "../../../ui/index";
 import { Vector3 } from "farmbot/dist";
 import { TOOL } from "./interfaces";
 import * as _ from "lodash";
-import { t } from "i18next";
 import { joinKindAndId } from "../../../resources/reducer";
 
 export function activeTools(resources: ResourceIndex) {
@@ -40,7 +39,7 @@ const HEADINGS: DropDownItem[] = [
   ...Object.keys(NAME_MAP)
     .filter(x => x !== "ToolSlot")
     .map((name: PointerTypeName | typeof TOOL) => ({
-      label: t(NAME_MAP[name]),
+      label: NAME_MAP[name],
       heading: true,
       value: 0,
       headingId: name
@@ -60,7 +59,7 @@ export function generateList(input: ResourceIndex,
     .concat(HEADINGS)
     .sortBy(SORT_KEY)
     .reverse()
-    .concat({ label: t("Other"), heading: true, value: 0, headingId: "Other" })
+    .concat({ label: "Other", heading: true, value: 0, headingId: "Other" })
     .concat(additionalItems)
     .value();
 }

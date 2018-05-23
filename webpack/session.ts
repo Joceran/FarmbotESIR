@@ -29,7 +29,7 @@ export namespace Session {
       if (box(v).kind === "object") {
         return v;
       } else {
-        throw new Error("Expected object or undefined"); // unreachable?
+        throw new Error("Expected object or undefined");
       }
     } catch (error) {
       return undefined;

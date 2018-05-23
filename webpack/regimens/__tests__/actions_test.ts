@@ -48,11 +48,7 @@ describe("deleteRegimen()", () => {
     const state = fakeState();
     state.resources.index = buildResourceIndex([fakeRegimen()]).index;
     const getState = () => state;
-    window.confirm = jest.fn();
-    deleteRegimen(state.resources.index.all[0])(dispatch, getState)
-      .catch(() => { });
-    expect(window.confirm).toHaveBeenCalledWith(
-      expect.stringContaining("delete this item?"));
+    deleteRegimen(state.resources.index.all[0])(dispatch, getState);
     expect(dispatch).not.toHaveBeenCalled();
   });
 
@@ -61,7 +57,8 @@ describe("deleteRegimen()", () => {
     const state = fakeState();
     state.resources.index = buildResourceIndex([fakeRegimen()]).index;
     const getState = () => state;
-    window.confirm = () => true;
+    // tslint:disable-next-line:no-any
+    (global as any).confirm = () => true;
     deleteRegimen(state.resources.index.all[0])(dispatch, getState);
     expect(dispatch).toHaveBeenCalledWith({
       payload: state.resources.index.references[state.resources.index.all[0]],
@@ -72,15 +69,25 @@ describe("deleteRegimen()", () => {
 
 describe("selectRegimen()", () => {
   it("selects regimen", () => {
-    const action = selectRegimen("Regimen.0.0");
+    const regimen = fakeRegimen();
+    regimen.uuid = "Regimen";
+    const action = selectRegimen(regimen);
     expect(action).toEqual({
-      payload: "Regimen.0.0",
+      payload: {
+        body: { color: "red", name: "Foo", regimen_items: [] },
+        kind: "Regimen",
+        uuid: "Regimen",
+        specialStatus: ""
+      },
       type: Actions.SELECT_REGIMEN
     });
   });
 
   it("crashes if malformed", () => {
     console.warn = jest.fn();
-    expect(() => selectRegimen("wrong")).toThrowError();
+    const regimen = fakeRegimen();
+    regimen.uuid = "nope";
+    regimen.kind = "wrong" as any;
+    expect(() => selectRegimen(regimen)).toThrowError();
   });
 });

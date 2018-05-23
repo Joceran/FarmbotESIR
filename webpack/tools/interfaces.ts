@@ -26,7 +26,6 @@ export interface Props {
 export interface Tool {
   id?: number | undefined;
   name?: string;
-  status?: string | undefined;
 }
 
 export interface ToolBayListProps {
@@ -58,5 +57,4 @@ export interface ToolFormProps {
   dispatch: Function;
   tools: TaggedTool[];
   toggle(): void;
-  isActive(tool: TaggedTool): boolean;
 }

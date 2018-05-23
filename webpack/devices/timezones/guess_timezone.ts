@@ -1,8 +1,7 @@
 import { t } from "i18next";
 import * as _ from "lodash";
 import { Content } from "../../constants";
-
-/** Used for every new account the first time the Device page is loaded. */
+/** Remove this in October 2017 - RC */
 const ONLY_ONCE = {
   need_to_talk: true
 };

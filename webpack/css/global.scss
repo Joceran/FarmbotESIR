@@ -8,13 +8,6 @@ body {
   margin-bottom: 1rem;
 }
 
-.color-picker-col {
-  padding: 0;
-  .pt-popover-target {
-    float: left;
-  }
-}
-
 .colorpicker-menu {
   padding: 0;
   .pt-popover-arrow-fill {
@@ -326,7 +319,7 @@ fieldset {
   }
 }
 
-.webcam-stream-unavailable p {
+.webcam-stream-unavailable text {
   width: 100%;
   position: absolute;
   top: 50%;
@@ -491,18 +484,6 @@ ul {
   font-size: 1.2rem;
 }
 
-.move-settings-menu {
-  label {
-    margin-top: 7px;
-  }
-  p {
-    margin-top: 0.7rem;
-    font-size: 1.4rem;
-    color: $medium_gray;
-    font-weight: 400;
-  }
-}
-
 .controls-popup,
 .controls-popup-menu-outer {
   position: fixed;
@@ -581,14 +562,6 @@ ul {
   margin-top: 10%;
 }
 
-.farmware-selection-panel {
-  .filter-search {
-    i {
-      top: 38% !important;
-    }
-  }
-}
-
 .logs {
   .row {
     @media screen and (max-width: 974px) {
@@ -601,9 +574,6 @@ ul {
     margin-left: 1rem;
     margin-top: 0.25rem;
   }
-  .pt-popover-target {
-    float: right;
-  }
 }
 
 .logs-settings-menu {
@@ -614,10 +584,9 @@ ul {
     float: left;
     margin-right: 10px;
   }
-  .pt-popover-wrapper {
-    display: inline-block;
+  .pt-popover-target {
+    display: inline;
     margin-left: 1rem;
-    margin-top: 0.5rem;
   }
 }
 
@@ -689,11 +658,6 @@ ul {
   .fb-button {
     margin-top: 1rem;
   }
-  .filter-search {
-    i {
-      top: 38% !important;
-    }
-  }
 }
 
 .sensors-widget {
@@ -705,7 +669,7 @@ ul {
   }
   .sensor-reading-display {
     &.moisture-sensor {
-      background: linear-gradient(to right, rgba($blue, 0) 20%, $blue 80%, rgba($blue, 0) 85%);
+      background: linear-gradient(to right, #a4c2f400 20%, #a4c2f4ff 80%, #a4c2f400 85%);
     }
     border-style: solid;
     border-color: $dark_gray;
@@ -722,19 +686,5 @@ ul {
         top: 0.15rem;
       }
     }
-  }
-}
-
-.farmmware-step-input-fields {
-  label {
-    padding-top: 1rem;
-  }
-  fieldset {
-    width: 95%;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  button {
-    position: absolute;
   }
 }

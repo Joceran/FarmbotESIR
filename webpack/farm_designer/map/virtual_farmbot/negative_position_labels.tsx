@@ -1,9 +1,9 @@
 import * as React from "react";
 import { BotPosition } from "../../../devices/interfaces";
 import { MapTransformProps, AxisNumberProperty } from "../interfaces";
-import { transformXY } from "../util";
+import { getXYFromQuadrant } from "../util";
 import { Color } from "../../../ui";
-import { botPositionLabel } from "./bot_position_label";
+import { isNumber } from "lodash";
 
 export interface NegativePositionLabelProps {
   position: BotPosition;
@@ -13,12 +13,14 @@ export interface NegativePositionLabelProps {
 
 export function NegativePositionLabel(props: NegativePositionLabelProps) {
   const { position, mapTransformProps, plantAreaOffset } = props;
+  const { quadrant, gridSize } = mapTransformProps;
   const xIsNegative = position.x && position.x < 0;
   const yIsNegative = position.y && position.y < 0;
-  const origin = transformXY(
+  const origin = getXYFromQuadrant(
     -plantAreaOffset.x + 40,
     -plantAreaOffset.y - 10,
-    mapTransformProps);
+    quadrant, gridSize);
+  const show = (n: number | undefined) => isNumber(n) ? n : "---";
 
   return <g id={"negative-position-label"}
     fontFamily="Arial" textAnchor="middle" dominantBaseline="central"
@@ -27,7 +29,7 @@ export function NegativePositionLabel(props: NegativePositionLabelProps) {
       visibility={(xIsNegative || yIsNegative) ? "visible" : "hidden"}
       x={origin.qx}
       y={origin.qy}>
-      {botPositionLabel(position)}
+      {`(${show(position.x)}, ${show(position.y)}, ${show(position.z)})`}
     </text>
   </g>;
 }

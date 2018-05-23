@@ -1,15 +1,13 @@
 import * as React from "react";
-import { LogsFilterMenuProps } from "../interfaces";
+import { LogsFilterMenuProps, LogsState } from "../interfaces";
 import * as _ from "lodash";
 import { Slider } from "@blueprintjs/core";
 import { t } from "i18next";
 import { Filters } from "../interfaces";
 
 export const LogsFilterMenu = (props: LogsFilterMenuProps) => {
-  /** Filter level 0: logs hidden. */
-  const btnColor = (x: keyof Filters) => props.state[x] != 0
+  const btnColor = (x: keyof LogsState) => props.state[x] != 0
     ? "green" : "red";
-  /** Set the filter level to the same value for all log message types. */
   const setAll = (level: number) => () => {
     ["success", "busy", "warn", "error", "info", "fun", "debug"]
       .map((x: keyof Filters) => props.setFilterLevel(x)(level));
@@ -28,7 +26,7 @@ export const LogsFilterMenu = (props: LogsFilterMenuProps) => {
     </fieldset>
     {Object.keys(props.state)
       .filter(x => { if (!(x == "autoscroll")) { return x; } })
-      .map((logType: keyof Filters) => {
+      .map((logType: keyof LogsState) => {
         return <fieldset key={logType}>
           <label>
             <div className={`saucer ${logType}`} />

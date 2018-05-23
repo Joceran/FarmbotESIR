@@ -25,13 +25,21 @@ describe LogService do
     end
   end
 
+  it "clips overflowing logs" do
+    device = Device.find(device_id)
+    FactoryBot.create_list(:log, device.max_log_count + 10, device: device)
+    b4 = device.logs.count
+    LogService.process(fake_delivery_info, normal_payl)
+    expect(device.logs.count).to be < b4
+    expect(device.logs.count).to eq(device.max_log_count)
+  end
+
   it "calls .subscribe() on Transport." do
-    Transport.current.clear!
+    fakee = FakeLogChan.new
+    allow(Transport).to receive(:log_channel) { fakee }
+    expect(fakee.subcribe_calls).to eq(0)
     load "lib/log_service.rb"
-    arg1        = Transport.current.connection.calls[:subscribe].last[0]
-    routing_key = Transport.current.connection.calls[:bind].last[1][:routing_key]
-    expect(arg1).to        eq({block: true})
-    expect(routing_key).to eq("bot.*.logs")
+    expect(fakee.subcribe_calls).to eq(1)
   end
 
   it "creates new messages in the DB when called" do
@@ -41,11 +49,53 @@ describe LogService do
     expect(Log.count).to be > b4
   end
 
-  it "warns the user that they've been throttled" do
-    data           = AmqpLogParser::DeliveryInfo.new
-    data.device_id = FactoryBot.create(:device).id
-    time           = Time.now
-    expect_any_instance_of(Device).to receive(:maybe_throttle_until).with(time)
-    LogService.warn_user(data, time)
+  it "ignores legacy logs" do
+    Log.destroy_all
+    b4 = Log.count
+    LogService.process(fake_delivery_info, legacy_payl)
+    expect(b4).to eq(Log.count)
+  end
+
+  it "knows when to not save" do
+    dont_save1 = { # `fun` type (easter eggs n stuff)
+      "meta" => {
+        "z"=>0,
+        "y"=>0,
+        "x"=>0,
+        "type"=>"fun",
+        "major_version"=>6
+      },
+      "message"=>"dont_save1",
+      "created_at"=>1512585641,
+      "channels"=>[]
+    }
+
+    dont_save2 = { # Missing `type`.
+      "meta" => {
+        "z"=>0,
+        "y"=>0,
+        "x"=>0,
+        "major_version"=>6
+      },
+      "message"=>"dont_save2",
+      "created_at"=>1512585641,
+      "channels"=>[]
+    }
+
+    do_save = {
+      "meta" => {
+        "z"=>0,
+        "y"=>0,
+        "x"=>0,
+        "type"=>"info",
+        "major_version"=>6
+      },
+      "message"=>"dont_save",
+      "created_at"=>1512585641,
+      "channels"=>[]
+    }
+    expect(LogService.save?(dont_save1)).to be(false)
+    expect(LogService.save?(dont_save2)).to be(false)
+    expect(LogService.save?(do_save)).to be(true)
   end
 end

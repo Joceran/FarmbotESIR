@@ -33,7 +33,9 @@ module Api
     end
 
     def sequences
-      @sequences ||= Sequence.with_usage_reports.where(device: current_device)
+      @sequences ||= Sequence
+                      .includes(:primary_nodes, :edge_nodes)
+                      .where(device: current_device)
     end
 
     def sequence

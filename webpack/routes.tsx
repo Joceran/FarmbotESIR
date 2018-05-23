@@ -22,8 +22,7 @@ export const attachAppToDom: Callback = () => {
 export class RootComponent extends React.Component<RootComponentProps, {}> {
   componentWillMount() {
     const notLoggedIn = !Session.fetchStoredToken();
-    const currentLocation = history.getCurrentLocation().pathname;
-    const restrictedArea = currentLocation.includes("/app");
+    const restrictedArea = window.location.pathname.includes("/app");
     (notLoggedIn && restrictedArea && Session.clear());
   }
 

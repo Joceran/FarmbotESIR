@@ -18,7 +18,6 @@ export function LayerToggle({ label, value, onClick, popover }: LayerToggleProps
         {label}
         {popover &&
           <Popover
-            targetClassName={"caret-menu-button"}
             position={Position.BOTTOM_RIGHT}
             className={"caret-menu-button"}>
             <i className="fa fa-caret-down" title={t("filter")} />

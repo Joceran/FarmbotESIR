@@ -1,5 +1,5 @@
 import { Everything } from "../interfaces";
-import { Props, HardwareFlags, FarmwareConfigs } from "./interfaces";
+import { Props, HardwareFlags } from "./interfaces";
 import {
   selectAllSequences, findSequence, maybeGetDevice, getFirmwareConfig
 } from "../resources/selectors";
@@ -55,10 +55,6 @@ export function mapStateToProps(props: Everything): Props {
   const { firstPartyFarmwareNames } = props.resources.consumers.farmware;
   const conf = getWebAppConfig(props.resources.index);
   const showFirstPartyFarmware = !!(conf && conf.body.show_first_party_farmware);
-  const farmwareConfigs: FarmwareConfigs = {};
-  Object.keys(farmwares)
-    .map(x => farmwares[x])
-    .map(fw => farmwareConfigs[fw.name] = fw.config);
 
   const installedOsVersion = determineInstalledOsVersion(
     props.bot, maybeGetDevice(props.resources.index));
@@ -78,8 +74,7 @@ export function mapStateToProps(props: Everything): Props {
     farmwareInfo: {
       farmwareNames,
       firstPartyFarmwareNames,
-      showFirstPartyFarmware,
-      farmwareConfigs,
+      showFirstPartyFarmware
     },
     shouldDisplay: shouldDisplay(installedOsVersion, props.bot.minOsFeatureData),
   };

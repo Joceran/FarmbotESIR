@@ -92,10 +92,6 @@ export class API {
   get devicePath() { return `${this.baseUrl}/api/device/`; }
   /** /api/users/ */
   get usersPath() { return `${this.baseUrl}/api/users/`; }
-  /** /api/users/control_certificate */
-  get transferCertPath() {
-    return `${this.baseUrl}/api/users/control_certificate`;
-  }
   /** /api/users/resend_verification */
   get userResendConfirmationPath() {
     return this.usersPath + "/resend_verification";
@@ -135,16 +131,6 @@ export class API {
   get deviceConfigPath() { return `${this.baseUrl}/api/device_configs`; }
   /** /api/pin_bindings/:id */
   get pinBindingPath() { return `${this.baseUrl}/api/pin_bindings/`; }
-  /** /api/saved_gardens/:id */
-  get savedGardensPath() { return `${this.baseUrl}/api/saved_gardens`; }
-  /** /api/saved_gardens/snapshot */
-  get snapshotPath() { return this.savedGardensPath + "/snapshot"; }
-  /** /api/saved_gardens/:id/apply */
-  applyGardenPath =
-    (gardenId: number) => `${this.savedGardensPath}/${gardenId}/apply`;
-  get exportDataPath() { return `${this.baseUrl}/api/export_data`; }
-  /** /api/plant_templates/:id */
-  get plantTemplatePath() { return `${this.baseUrl}/api/plant_templates`; }
   /** /api/farmware_installations/:id */
   get farmwareInstallationPath() {
     return `${this.baseUrl}/api/farmware_installations`;

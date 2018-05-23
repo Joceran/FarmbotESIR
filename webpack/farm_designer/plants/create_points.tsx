@@ -96,7 +96,6 @@ export class CreatePoints
         payload: { cx, cy, r, color }
       });
     }
-    this.forceUpdate();
   }
 
   createPoint = () => {

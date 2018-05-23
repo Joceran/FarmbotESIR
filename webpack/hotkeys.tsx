@@ -24,7 +24,7 @@ interface State {
 
 const hotkeyGuideClasses = [
   "hotkey-guide",
-  Classes.CARD,
+  "pt-card",
   Classes.ELEVATION_4
 ].join(" ");
 

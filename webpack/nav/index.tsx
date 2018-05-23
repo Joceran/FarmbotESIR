@@ -11,7 +11,11 @@ import { NavLinks } from "./nav_links";
 import { TickerList } from "./ticker_list";
 import { AdditionalMenu } from "./additional_menu";
 import { MobileMenu } from "./mobile_menu";
-import { Popover, Position } from "@blueprintjs/core";
+import {
+  Popover,
+  Position,
+  PopoverInteractionKind
+} from "@blueprintjs/core/dist";
 import { ErrorBoundary } from "../error_boundary";
 
 export class NavBar extends React.Component<NavBarProps, Partial<NavBarState>> {
@@ -78,16 +82,17 @@ export class NavBar extends React.Component<NavBarProps, Partial<NavBarState>> {
                   </div>
                   <div className="nav-right">
                     <Popover
+                      inline
+                      interactionKind={PopoverInteractionKind.HOVER}
+                      target={
+                        <div className="nav-name"
+                          onClick={this.toggle("accountMenuOpen")}>
+                          {firstName}
+                        </div>}
                       position={Position.BOTTOM_RIGHT}
+                      content={AdditionalMenu({ logout: this.logout, close })}
                       isOpen={accountMenuOpen}
-                      onClose={this.close("accountMenuOpen")}
-                      usePortal={false}>
-                      <div className="nav-name"
-                        onClick={this.toggle("accountMenuOpen")}>
-                        {firstName}
-                      </div>
-                      {AdditionalMenu({ logout: this.logout, close })}
-                    </Popover>
+                      onClose={this.close("accountMenuOpen")} />
                     <EStopButton
                       bot={this.props.bot}
                       user={this.props.user} />

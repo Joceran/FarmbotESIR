@@ -1,10 +1,8 @@
 module ToolSlots
   class Create < Mutations::Command
-    FIELDS = [:tool_id, :pullout_direction, :x, :y, :z, :name]
-
     required do
       model   :device, class: Device
-      string  :name,   default: "Untitled Slot"
+      string  :name, default: "Untitled Slot"
       integer :x
       integer :y
       integer :z
@@ -22,8 +20,12 @@ module ToolSlots
     end
 
     def execute
-      stub = {pointer_type: "ToolSlot", device_id: device.id}
-      ToolSlot.create!(inputs.slice(*FIELDS).merge(stub))
+      Point
+        .create!(inputs.slice(:x,:y,:z,:name, :device).merge(pointer: pointer))
+    end
+
+    def pointer
+      ToolSlot.new(inputs.slice(:tool_id, :pullout_direction))
     end
 
     def has_tool_id

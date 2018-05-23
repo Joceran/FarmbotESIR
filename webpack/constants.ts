@@ -127,18 +127,14 @@ export namespace ToolTips {
     trim(`(Alpha) Reduction to missed step total for every good step.`);
 
   export const ENCODER_SCALING =
-    trim(`(Alpha) encoder scaling factor = 10000 * (motor resolution * microsteps)
+    trim(`(Alpha) encoder scaling factor = 100 * (motor resolution * microsteps)
     / (encoder resolution).`);
 
   export const ENABLE_ENDSTOPS =
     trim(`Enable use of electronic end-stops during calibration and homing.`);
 
-  export const SWAP_ENDPOINTS =
-    trim(`Swap axis minimum and maximum end-stops.`);
-
   export const INVERT_ENDPOINTS =
-    trim(`Invert axis end-stops. Enable for normally closed (NC),
-    disable for normally open (NO).`);
+    trim(`Swap axis end-stops during calibration.`);
 
   // Hardware Settings: Pin Guard
   export const PIN_GUARD_PIN_NUMBER =
@@ -298,11 +294,6 @@ export namespace ToolTips {
 export namespace Content {
 
   // Account
-  export const ACCOUNT_PASSWORD_CHANGE =
-    trim(`Upon successful password change, your FarmBot will factory reset
-    allowing you to configure it with the updated credentials. You will also be
-    logged out of other browser sessions. Continue?`);
-
   export const ACCOUNT_DELETE_WARNING =
     trim(`WARNING! Deleting your account will permanently delete all of your
     Sequences , Regimens, Events, and Farm Designer data.Upon deleting your
@@ -317,13 +308,6 @@ export namespace Content {
     trim(`If you are sure you want to delete your account, type in
     your password below to continue.`);
 
-  export const EXPORT_DATA_DESC =
-    trim(`Export all data related to this device. Exports are delivered via
-    email as JSON.`);
-
-  export const EXPORT_SENT =
-    trim(`Export request received. Please allow up to 10 minutes for
-    delivery.`);
   // App Settings
   export const CONFIRM_STEP_DELETION =
     trim(`Show a confirmation dialog when the sequence delete step
@@ -487,10 +471,6 @@ export namespace Content {
   export const NO_REGIMEN_SELECTED =
     trim(`No Regimen selected. Click one in the Regimens panel to edit, or
     click "+" in the Regimens panel to create a new one.`);
-
-  // Farm Designer
-  export const OUTSIDE_PLANTING_AREA =
-    trim(`Outside of planting area. Plants must be placed within the grid.`);
 
   // Farm Events
   export const REGIMEN_TODAY_SKIPPED_ITEM_RISK =

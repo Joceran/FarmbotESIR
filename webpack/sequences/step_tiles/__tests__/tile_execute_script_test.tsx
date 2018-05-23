@@ -24,14 +24,13 @@ describe("<TileExecuteScript/>", () => {
       farmwareInfo: {
         farmwareNames: ["one", "two", "three"],
         firstPartyFarmwareNames: ["one"],
-        showFirstPartyFarmware: false,
-        farmwareConfigs: { "farmware-to-execute": [] },
+        showFirstPartyFarmware: false
       }
     };
   };
 
   it("renders inputs", () => {
-    const wrapper = mount(<TileExecuteScript {...fakeProps()} />);
+    const wrapper = mount(<TileExecuteScript {...fakeProps() } />);
     const inputs = wrapper.find("input");
     const labels = wrapper.find("label");
     expect(inputs.length).toEqual(2);
@@ -42,15 +41,8 @@ describe("<TileExecuteScript/>", () => {
     expect(inputs.at(1).props().value).toEqual("farmware-to-execute");
   });
 
-  it("renders error on wrong step", () => {
-    const p = fakeProps();
-    p.currentStep = { kind: "wait", args: { milliseconds: 100 } };
-    const wrapper = mount(<TileExecuteScript {...p} />);
-    expect(wrapper.text()).toContain("ERROR");
-  });
-
   it("renders farmware list", () => {
-    const wrapper = shallow(<TileExecuteScript {...fakeProps()} />);
+    const wrapper = shallow(<TileExecuteScript {...fakeProps() } />);
     expect(wrapper.find("FBSelect").props().list).toEqual([
       { label: "two", value: "two" },
       { label: "three", value: "three" }]);

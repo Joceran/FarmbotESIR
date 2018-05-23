@@ -4,7 +4,7 @@ import { WeedDetectorConfig } from "./config";
 import { WidgetHeader } from "../../ui/index";
 import { WD_ENV } from "./remote_env/interfaces";
 import { envSave } from "./remote_env/actions";
-import { Popover } from "@blueprintjs/core";
+import { Popover, PopoverInteractionKind } from "@blueprintjs/core";
 import { DocSlug } from "../../ui/index";
 
 type ClickHandler = React.EventHandler<React.MouseEvent<HTMLButtonElement>>;
@@ -58,7 +58,8 @@ export function TitleBar({
       {t("Calibrate")}
     </button>
     <div hidden={!env}>
-      <Popover>
+      <Popover
+        interactionKind={PopoverInteractionKind.CLICK_TARGET_ONLY}>
         <i className="fa fa-cog" />
         {(env && <WeedDetectorConfig
           values={env}

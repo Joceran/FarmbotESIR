@@ -23,7 +23,6 @@ import {
 import { betterCompact, bail } from "../util";
 import { findAllById } from "./selectors_by_id";
 import { findPoints, selectAllPoints } from "./selectors_by_kind";
-import { assertUuid } from "./util";
 
 export * from "./selectors_by_id";
 export * from "./selectors_by_kind";
@@ -140,6 +139,19 @@ export function getSequenceByUUID(index: ResourceIndex,
   }
 }
 
+export function assertUuid(expected: ResourceName, actual: string | undefined) {
+  if (actual && !actual.startsWith(expected)) {
+    console.warn(`
+    BAD NEWS!!! You thought this was a ${expected} UUID, but here's what it
+    actually was:
+      ${actual}
+    `);
+    return false;
+  } else {
+    return true;
+  }
+}
+
 /** GIVEN: a slot UUID.
  *  FINDS: Tool in that slot (if any) */
 export let currentToolInSlot = (index: ResourceIndex) =>
@@ -160,6 +172,10 @@ export let currentToolInSlot = (index: ResourceIndex) =>
 export function toolsInUse(index: ResourceIndex): TaggedTool[] {
   const ids = betterCompact(selectAllToolSlotPointers(index).map(ts => ts.body.tool_id));
   return findAllById(index, ids, "Tool") as TaggedTool[];
+}
+
+export function hasId(ri: ResourceIndex, k: ResourceName, id: number): boolean {
+  return !!ri.byKindAndId[joinKindAndId(k, id)];
 }
 
 export function maybeGetSequence(index: ResourceIndex,

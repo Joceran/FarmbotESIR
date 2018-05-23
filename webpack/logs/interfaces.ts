@@ -1,6 +1,6 @@
 import { TaggedLog } from "../resources/tagged_resources";
 import { BotState, SourceFbosConfig } from "../devices/interfaces";
-import { ConfigurationName, ALLOWED_MESSAGE_TYPES } from "farmbot";
+import { ConfigurationName } from "farmbot";
 
 export interface LogsProps {
   logs: TaggedLog[];
@@ -10,7 +10,15 @@ export interface LogsProps {
   sourceFbosConfig: SourceFbosConfig;
 }
 
-export type Filters = Record<ALLOWED_MESSAGE_TYPES, number>;
+export interface Filters {
+  success: number;
+  busy: number;
+  warn: number;
+  error: number;
+  info: number;
+  fun: number;
+  debug: number;
+}
 
 export interface LogsState extends Filters {
   autoscroll: boolean;
