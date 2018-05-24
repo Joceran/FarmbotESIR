@@ -1,11 +1,7 @@
 module Api
   class SuggestionsController < Api::AbstractController
-    def index
-    
-    end
-
     def create
-      
+      mutate Suggestions::Create.run(data)
     end
   end
 end

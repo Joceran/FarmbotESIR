@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180403211523) do
+ActiveRecord::Schema.define(version: 20180524092254) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -361,6 +361,10 @@ ActiveRecord::Schema.define(version: 20180403211523) do
     t.boolean "migrated_nodes", default: false
     t.index ["created_at"], name: "index_sequences_on_created_at"
     t.index ["device_id"], name: "index_sequences_on_device_id"
+  end
+
+  create_table "suggestions", force: :cascade do |t|
+    t.string "data"
   end
 
   create_table "token_issuances", force: :cascade do |t|
