@@ -14,12 +14,16 @@ module Api
 
     def recommandations()
       puts "\n Voici vos recommandations"
-      @crops.each do |crop|
-          crop_companions_data = crop.data.relationships.companions.data
+      @plants.each do |crop|
+          cropTemp = getCropFromName(crop.openfarm_slug)
+          crop_companions_data = cropTemp.data.relationships.companions.data
           crop_companions_data.each do |datum|
-              unless(@crops.include? datum.id)
-                  suggestedCrop = getCropFromId(datum.id)
-                  newEntry = Suggestions.new
+              unless(@plants.include? getSlugFromId(datum.id))
+                  suggestedCrop = getCropFromName(getSlugFromId(datum.id))
+                  newEntry = Suggestions.newEntry
+                  newEntry.plantId = suggestedCrop.id
+                  newEntry.plantSlug = suggestedCrop.attributes.slug
+                  newEntry.becauseOf = crop.openfarm_slug
 
                   puts " - #{suggestedCrop.data.attributes.name}"
               end
@@ -67,7 +71,15 @@ module Api
       return json_object
   end
 
+  def getSlugFromId(id)
+    url = "http://openfarm.cc/api/v1/crops/#{id}"
+    response = HTTParty.get(url)
 
+    #puts response.body, response.code, response.message, response.headers.inspect
 
-  end
+    json_string = response.body
+    json_object = JSON.parse(json_string, object_class: OpenStruct)
+    
+    return json_object.data.attributes.slug
+end
 end
