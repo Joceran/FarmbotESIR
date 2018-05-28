@@ -135,4 +135,9 @@ export class API {
   get farmwareInstallationPath() {
     return `${this.baseUrl}/api/farmware_installations`;
   }
+  
+  //Routes suggestions
+  get allListSuggestions() {
+    return `${this.baseUrl}/api/list_suggestions`;
+  }
 }

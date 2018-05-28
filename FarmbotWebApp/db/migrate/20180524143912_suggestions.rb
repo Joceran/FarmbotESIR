@@ -1,5 +1,6 @@
 class Suggestions < ActiveRecord::Migration[5.1]
   def change
+	drop_table :suggestions
     create_table :suggestions do |t|
       #Id of the suggest
       t.belongs_to :listSuggestion
@@ -15,5 +16,6 @@ class Suggestions < ActiveRecord::Migration[5.1]
 
       #Slug name of the plant that is planted where the suggestion comes from
       t.string :becauseOf
+     end
   end
 end
