@@ -2,9 +2,9 @@ class Suggestions < ActiveRecord::Migration[5.1]
   def change
     create_table :suggestions do |t|
       #Id of the suggest
-      t.string :suggestId
+      t.belongs_to :listSuggestion
 
-      #Id of the plant
+      #Id of the plant 
       t.string :plantId
 
       #Slug name of the plant
