@@ -15,8 +15,8 @@ module Api
     def create
       puts params.as_json;
       puts params["userId"];
-      mutate ListSuggestions::Create.run(userId: params["userId"])
-      
+      @user_id = params["userId"]
+      newListSuggestion = mutate ListSuggestions::Create.run(userId: params["userId"], dateDemande: Date.today, luminosite: params["eclairage"])
       #Creer des suggestions en fonctions de l'algo
       #mutate Suggestions::Create.run(data: "tomate")
     end
@@ -36,7 +36,9 @@ module Api
 									newEntry.plantId = suggestedCrop.data.id
 									newEntry.plantSlug = suggestedCrop.data.attributes.slug
 									newEntry.becauseOf = crop.openfarm_slug
-
+									newEntry.suggestId = newListSuggestion.id
+									
+									
 									puts " - #{suggestedCrop.data.attributes.name}"
 								end
 						end

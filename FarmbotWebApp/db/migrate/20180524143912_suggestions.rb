@@ -3,7 +3,8 @@ class Suggestions < ActiveRecord::Migration[5.1]
 	drop_table :suggestions
     create_table :suggestions do |t|
       #Id of the suggest
-      t.belongs_to :listSuggestion
+      #t.belongs_to :listSuggestion, foreign_key:"id"
+      t.string :suggestId
 
       #Id of the plant 
       t.string :plantId
