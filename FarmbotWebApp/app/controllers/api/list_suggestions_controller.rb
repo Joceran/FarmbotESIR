@@ -9,14 +9,60 @@ module Api
 		allListSuggestions.all.each do |sugg|
 		  puts "Id : " + sugg.id.to_s + "; User id : "+sugg.userId;
 		end
-	end
-	
-	#POST /api/list_suggestion
-    def create
-      puts params.as_json;
-      puts params["userId"];
-      @user_id = params["userId"]
+		end
+		
+		#POST /api/list_suggestion
+		def create
+		  @plants = Plants.all
+		  
+		  @plantList = {"apple" => {sun: "Fort", type: "fruit"} , "strawberry" => {sun: "Fort", type: "fruit"}, "melon" => {sun: "Fort", type: "fruit"}, "potato" => {sun: "Fort", type: "legume"}, "lettuce" => {sun: "Modéré", type: "legume"}, "eggplant" => {sun: "Fort", type: "legume"} }
+																			
+		  puts params.as_json;
+		  puts params["userId"];																																				
+      @user_id = params["userId"]																
       newListSuggestion = mutate ListSuggestions::Create.run(userId: params["userId"], dateDemande: Date.today, luminosite: params["eclairage"])
+      
+			if @plants.find(:all).empty?
+				if (params["fruit"] == true) && (params["legume"] == true)
+					for @plantList.each do |nom, attribut|
+						if(attribut.sun == params["luminosite"]
+							newEntry = Suggestions.newEntry
+							suggestedCrop = getCropFromName(nom)
+							newEntry.plantId = suggestedCrop.data.id
+							newEntry.plantSlug = suggestedCrop.data.attributes.slug
+							newEntry.becauseOf = crop.openfarm_slug
+							newEntry.suggestId = newListSuggestion.id
+						end
+					end
+				elsif (params["fruit"] == true) && (params["legume"] == false)
+					for @plantList.each do |nom, attribut|
+						if(attribut.sun == params["luminosite"]) && (attribut.type == "fruit")
+							newEntry = Suggestions.newEntry
+							suggestedCrop = getCropFromName(nom)
+							newEntry.plantId = suggestedCrop.data.id
+							newEntry.plantSlug = suggestedCrop.data.attributes.slug
+							newEntry.becauseOf = crop.openfarm_slug
+							newEntry.suggestId = newListSuggestion.id
+						end
+					end
+				elsif (params["fruit"] == false) && (params["legume"] == true)
+					for @plantList.each do |nom, attribut|
+						if(attribut.sun == params["luminosite"]) && (attribut.type == "fruit")
+							newEntry = Suggestions.newEntry
+							suggestedCrop = getCropFromName(nom)
+							newEntry.plantId = suggestedCrop.data.id
+							newEntry.plantSlug = suggestedCrop.data.attributes.slug
+							newEntry.becauseOf = crop.openfarm_slug
+							newEntry.suggestId = newListSuggestion.id
+						end
+					end
+				end
+			else
+				recommandations()
+			end
+				
+      
+      
       #Creer des suggestions en fonctions de l'algo
       #mutate Suggestions::Create.run(data: "tomate")
     end
@@ -31,17 +77,16 @@ module Api
 				crop_companions_data.each do |datum|
 						unless(@plants.include? getSlugFromId(datum.id))
 								suggestedCrop = getCropFromName(getSlugFromId(datum.id))
-								if(suggestedCrop.data.attributes.sun_requirements == lightning)
+								#if(suggestedCrop.data.attributes.sun_requirements == lightning)
 									newEntry = Suggestions.newEntry
 									newEntry.plantId = suggestedCrop.data.id
 									newEntry.plantSlug = suggestedCrop.data.attributes.slug
 									newEntry.becauseOf = crop.openfarm_slug
-									
 									newEntry.suggestId = newListSuggestion.id
 									
 									
 									puts " - #{suggestedCrop.data.attributes.name}"
-								end
+								#end
 						end
 				end
 		end
