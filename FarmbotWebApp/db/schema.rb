@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180524092254) do
+ActiveRecord::Schema.define(version: 20180528124302) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -222,6 +222,10 @@ ActiveRecord::Schema.define(version: 20180524092254) do
     t.index ["device_id"], name: "index_images_on_device_id"
   end
 
+  create_table "list_suggestions", force: :cascade do |t|
+    t.string "userId"
+  end
+
   create_table "log_dispatches", force: :cascade do |t|
     t.bigint "device_id"
     t.bigint "log_id"
@@ -364,7 +368,12 @@ ActiveRecord::Schema.define(version: 20180524092254) do
   end
 
   create_table "suggestions", force: :cascade do |t|
-    t.string "data"
+    t.bigint "listSuggestion_id"
+    t.string "plantId"
+    t.string "plantSlug"
+    t.integer "quantity"
+    t.string "becauseOf"
+    t.index ["listSuggestion_id"], name: "index_suggestions_on_listSuggestion_id"
   end
 
   create_table "token_issuances", force: :cascade do |t|
