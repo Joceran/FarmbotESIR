@@ -1,11 +1,18 @@
 module ListSuggestions
-  class Create < Mutations::Command
+  class Create < Mutations::Command 
     required do
-      string  :userId
+		string :userId
+		string :saison
+		string :dateDemande
+		string :luminosite
+		string :changement
+		boolean :fruits
+		boolean :legumes
     end
 
     def execute
-      ListSuggestion.create!(inputs)
+		list = ListSuggestion.create!(inputs)
+		return list.id
     end
   end
 end

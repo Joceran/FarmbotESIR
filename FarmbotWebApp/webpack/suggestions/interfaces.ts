@@ -1,4 +1,4 @@
 
 export interface SuggestionsState {
-  done: boolean;
+  form: boolean;
 }

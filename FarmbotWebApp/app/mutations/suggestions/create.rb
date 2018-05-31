@@ -1,7 +1,11 @@
 module Suggestions
   class Create < Mutations::Command
     required do
-      string  :data
+      integer :listSuggestion_id
+      string :plantId
+      string :plantSlug
+      integer :quantity
+      string :becauseOf
     end
 
     def execute

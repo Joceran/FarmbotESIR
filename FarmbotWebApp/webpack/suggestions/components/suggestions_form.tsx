@@ -2,30 +2,28 @@ import * as React from "react";
 import { WidgetBody, Widget, Col, Row } from "../../ui/index";
 import { t } from "i18next";
 
-export interface State {
+interface SuggestionsFormProps {
+  doneAction(): void;
+  userId: number;
+}
+
+interface State {
   [key:string]: any;
   saison?: string;
   eclairage?: string;
   changement?: string;
   fruits?: boolean;
   légumes?: boolean;
-  userId?: string;
 }
-
-export interface Props { }
-
-export class SuggestionsForm extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-	  saison: "",
-	  eclairage: "",
-	  changement: "",
+	
+export class SuggestionsForm extends React.Component<SuggestionsFormProps, {}> {
+  state: State = {
+	  saison: "any",
+	  eclairage: "any",
+	  changement: "any",
 	  fruits: false,
-	  légumes: false,
-	  userId: "moi"
-    };
-  }
+	  légumes: false
+  };
     
   submit(e: React.SyntheticEvent<HTMLInputElement>) {
     e.preventDefault();
@@ -35,8 +33,10 @@ export class SuggestionsForm extends React.Component<Props, State> {
     req.setRequestHeader("Content-Type", "application/json");
     req.setRequestHeader("Authorization", "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ1bmtub3duIiwic3ViIjoyMTAsImlhdCI6MTUyNzUxNTg0NCwianRpIjoiYTJjYTA2NjItZjUwZC00ZjI4LWEyNTMtODNlY2JiNWVjY2RjIiwiaXNzIjoiLy8xMC4wLjIuMTU6MzAwMCIsImV4cCI6MTUzMDk3MTg0NCwibXF0dCI6IjAuMC4wLjAiLCJib3QiOiJkZXZpY2VfMjgzIiwidmhvc3QiOiIvIiwibXF0dF93cyI6IndzOi8vMC4wLjAuMDozMDAyL3dzIiwib3NfdXBkYXRlX3NlcnZlciI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vcmVwb3MvZmFybWJvdC9mYXJtYm90X29zL3JlbGVhc2VzL2xhdGVzdCIsImludGVyaW1fZW1haWwiOiJqZWdvOTk5QGhvdG1haWwuZnIiLCJmd191cGRhdGVfc2VydmVyIjoiREVQUkVDQVRFRCIsImJldGFfb3NfdXBkYXRlX3NlcnZlciI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vcmVwb3MvRmFybUJvdC9mYXJtYm90X29zL3JlbGVhc2VzL2xhdGVzdCJ9.ZbonJF4FA1z6AL5C8FbmZN9UON6w4AwmsjMtN9s4iriUqs7vPcOINM27hA2WQoHvlpcGj_PTgmZbjje861KqCe_yEBHz8sMi12fmzV5t1KAUBH4OzGPATtcekfh1wFM2Rw_3vX-p2iUp6c7-oS1sAcG1BENNHsImZZVzToHpnhSK1tZt5AfuHcaxIgxNmi8E3Sk8KgHIFMeLgFx9EN43xfqigjXc8KjJ4SAMnOARI9cm4BL6aJNtCEn49k7U0Hbqh6IjoZs9jb3wx_ntg1oRITWAiQDLoo-Z9O8y3rdYeMqExcdDrUTfxxtV3dhRVKqngQKWtDw_xTKL3tFhfFu7BQ");
     
-    let json: string = '{"userId":"'+this.state.userId+'","saison":"'+this.state.saison+'", "eclairage":"'+this.state.eclairage+'"}';
+    let json: string = '{"userId":"'+this.props.userId+'","saison":"'+this.state.saison+'", "luminosite":"'+this.state.eclairage+'", "fruits":"'+this.state.fruits+'", "legumes":"'+this.state.légumes+'", "changement":"'+this.state.changement+'"}';
     req.send(json);
+    
+    this.props.doneAction();
   }
   
   set = (name: string) => (event: React.FormEvent<HTMLInputElement>) => {
@@ -63,7 +63,7 @@ export class SuggestionsForm extends React.Component<Props, State> {
 				{t("Saison")}
 			  </label>
 				<select onChange={this.set("saison").bind(this)}>
-					<option value="">Peu importe</option>
+					<option value="any">Peu importe</option>
 					<option value="Automne">Automne</option>
 					<option value="Hiver">Hiver</option>
 					<option value="Printemps">Printemps</option>
@@ -75,7 +75,7 @@ export class SuggestionsForm extends React.Component<Props, State> {
 				{t("Eclairage")}
 			  </label>
 				<select onChange={this.set("eclairage").bind(this)}>
-					<option value="">Peu importe</option>
+					<option value="any">Peu importe</option>
 					<option value="Fort">Fort</option>
 					<option value="Modéré">Modéré</option>
 					<option value="Faible">Faible</option>
@@ -89,7 +89,7 @@ export class SuggestionsForm extends React.Component<Props, State> {
 			  </label>
 			  <Row>
 				<Col xs={4}>
-					<input style={inputStyle} type="radio" name="changement" value="" checked={true} onChange={this.set("changement").bind(this)} /> Peu importe
+					<input style={inputStyle} type="radio" name="changement" value="any" checked={this.state.changement == "any"} onChange={this.set("changement").bind(this)} /> Peu importe
 				</Col>
 				<Col xs={4}>
 					<input style={inputStyle} type="radio" name="changement" value="oui" onChange={this.set("changement").bind(this)} /> Oui !
