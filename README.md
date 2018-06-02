@@ -51,7 +51,7 @@ possible.
   - Récupération des Suggestions.
   - Récupération de l’historique des suggestions de l’utilisateurs
 
-### Celles qui restent à faire :
+### Celles qui reste à faire :
 
   - Etudier la taille restante du champs en fonction de sa taille
     initial moins la place que prend les plants déjà présents.
