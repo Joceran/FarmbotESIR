@@ -18,7 +18,7 @@ A l’heure actuelle, nous n’avons pas de tests.
 ### Ce qu’il reste à faire :
 
 Etudier la taille restante du champs en fonction de sa taille initial moins la place que prend les plants déjà présents.
-Faire une Recherche plus détaillée mais implique une meilleure API.
+Faire une Recherche plus détaillée mais cela implique une meilleure API que Openfarm, telle qu’elle est actuellement.
 Discerner les fruits des légumes de façon automatique (problème à cause de l’API qui n’est pas complète).
 
 ### Les éléments facilitant l’évolution
