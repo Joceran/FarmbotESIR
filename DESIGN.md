@@ -8,16 +8,11 @@ Ces suggestions sont faites en allant chercher les graines dites “compagnons�
 L’utilisateur peut ensuite voir un historique de ses demandes de suggestion. 
 
 ### Règles d'architecture
+Utilisation de l'existant, en basant notre solution sur le Modèle Vue-Contrôleur déjà présent.
 
-Modèle-Vue-Contrôleur.
-Modèle : Bases de données
+Modèle : Bases de données des suggestions
 Vue : Onglet et formulaire
 Contrôleur : Système de recommandations
-
-### Modèle statique : organisation des packages, descriptions des classes principales et de leurs responsabilités
-Nous personnellement, on n’a pas eu à faire des packages, on a juste définit quelques classes, “Liste suggestions...”
-
-Je me demande si on doit présenter un état de l’art de toute l’application c’est à dire tout ce qui existait avant même qu’on ajoute notre fameux onglet ?
 
 
 ### Explication de la prise en compte des contraintes d'analyse
@@ -28,6 +23,6 @@ Le contrôle de version utilisé est Git, où nous y déposions nos modification
 
 Les technologies utilisés sont les mêmes que le Farmbot-Web-App d’origine, c’est à dire Ruby, Ruby On Rails et Typescript principalement.
 
-Pour la communication intra-projet nous avions notre Slack.
+Pour la communication intra-projet nous avons utilisés Slack.
 
 
